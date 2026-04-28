@@ -1698,6 +1698,9 @@ static int ixxat_usb_encode_msg(struct ixxat_usb_candevice *dev,
 		if (cf->flags & CANFD_BRS)
 			flags |= IXXAT_USB_FDMSG_FLAGS_FDR;
 
+		if (cf->flags & CANFD_ESI)
+			flags |= IXXAT_USB_FDMSG_FLAGS_ESI;
+
 		flags |= IXXAT_USB_ENCODE_DLC(can_fd_len2dlc(cf->len));
 	} else if (cf->can_id & CAN_RTR_FLAG) {
 		flags |= IXXAT_USB_MSG_FLAGS_RTR;
