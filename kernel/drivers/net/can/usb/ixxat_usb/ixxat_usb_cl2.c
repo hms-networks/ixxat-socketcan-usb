@@ -220,7 +220,6 @@ static int ixxat_usb_init_ctrl(struct ixxat_usb_candevice *dev)
 {
 #ifndef IX_INTREE_VARIANT
 	/* not supported:
-	 *  #define CAN_CTRLMODE_ONE_SHOT		0x08
 	 *  #define CAN_CTRLMODE_PRESUME_ACK		0x40
 	 *  #define CAN_CTRLMODE_CC_LEN8_DLC		0x100
 	 */

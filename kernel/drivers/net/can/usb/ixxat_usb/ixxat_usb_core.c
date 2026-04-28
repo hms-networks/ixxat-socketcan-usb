@@ -1705,6 +1705,9 @@ static int ixxat_usb_encode_msg(struct ixxat_usb_candevice *dev,
 		flags |= IXXAT_USB_ENCODE_DLC(cf->len);
 	}
 
+	if (dev->can.ctrlmode & CAN_CTRLMODE_ONE_SHOT)
+		flags |= IXXAT_USB_MSG_FLAGS_SINGLESHOT;
+
 	msg_base->size = sizeof(*msg_base) + cf->len - 1;
 
 	if (dev->adapter == &usb2can_cl1) {
@@ -2484,7 +2487,6 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	int i, err;
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
 	u32 ts_clock_divisor, ts_clock_freq;
-	struct ixxat_cancaps2 caps;
 #endif
 
 	/* number of echo_skb */
@@ -2507,6 +2509,8 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 
 	spin_lock_init(&dev->dev_lock);
 
+	dev->adapter->get_ctrl_caps(dev, &devdata->caps);
+
 	i = ctrl_index + adapter->ep_offs;
 	dev->ep_msg_in = adapter->ep_msg_in[i];
 	dev->ep_msg_out = adapter->ep_msg_out[i];
@@ -2519,6 +2523,27 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	dev->can.data_bittiming_const = adapter->btd;
 #endif
 	dev->can.ctrlmode_supported = adapter->modes;
+
+	dev->can.ctrlmode_supported &= ~(CAN_CTRLMODE_LISTENONLY |
+		                         CAN_CTRLMODE_ONE_SHOT |
+					 CAN_CTRLMODE_FD |
+					 CAN_CTRLMODE_FD_NON_ISO);
+
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_LISTONLY) {
+		dev->can.ctrlmode_supported |= CAN_CTRLMODE_LISTENONLY;
+	}
+
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_SSM) {
+		dev->can.ctrlmode_supported |= CAN_CTRLMODE_ONE_SHOT;
+	}
+
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_ISOFD) {
+		dev->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
+	}
+
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_NONISOFD) {
+		dev->can.ctrlmode_supported |= CAN_CTRLMODE_FD_NON_ISO;
+	}
 
 	/* map function */
 	dev->can.do_set_mode = ixxat_usb_set_mode;
@@ -2541,10 +2566,8 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
 	netdev->ethtool_ops = &ixxat_ethtool_ops;
 
-	dev->adapter->get_ctrl_caps(dev, &caps);
-
-	ts_clock_divisor = le32_to_cpu(caps.ts_clock_divisor);
-	ts_clock_freq  = le32_to_cpu(caps.ts_clock_freq);
+	ts_clock_divisor = le32_to_cpu(devdata->caps.ts_clock_divisor);
+	ts_clock_freq  = le32_to_cpu(devdata->caps.ts_clock_freq);
 
 	ixxat_usb_ts_set_cancaps(&dev->time_ref, ts_clock_divisor,
 				 ts_clock_freq);

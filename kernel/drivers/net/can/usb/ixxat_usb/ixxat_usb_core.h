@@ -196,7 +196,7 @@
 #define IXXAT_USB_ENCODE_DLC(len)		\
 				(((len) << 16) & IXXAT_USB_MSG_FLAGS_DLC)
 
-#define IXXAT_USB_MSG_FLAGS_SINGLESHOTMODE	0x00000100
+#define IXXAT_USB_MSG_FLAGS_SINGLESHOT		0x00000100
 #define IXXAT_USB_MSG_FLAGS_HIPRIORITY		0x00000200
 
 #define IXXAT_USB_MSG_FLAGS_TXDELAYMODE		0x00002000
@@ -803,6 +803,9 @@ struct ixxat_usb_device_data {
 	/* device and firmware info */
 	struct ixxat_dev_info dev_info;
 	struct ixxat_fw_info2 fw_info;
+
+	/* controller capabilities */
+	struct ixxat_cancaps2 caps;
 
 	/* time reference of first controller start */
 	bool    timeref_valid;
