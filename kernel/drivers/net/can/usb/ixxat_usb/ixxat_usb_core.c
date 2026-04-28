@@ -1692,16 +1692,15 @@ static int ixxat_usb_encode_msg(struct ixxat_usb_candevice *dev,
 		msg_id = cf->can_id & CAN_SFF_MASK;
 	}
 
-	if (cf->can_id & CAN_RTR_FLAG) {
-		flags |= IXXAT_USB_MSG_FLAGS_RTR;
-
-	} else if (can_is_canfd_skb(skb)) {
+	if (can_is_canfd_skb(skb)) {
 		flags |= IXXAT_USB_FDMSG_FLAGS_EDL;
 
 		if (cf->flags & CANFD_BRS)
 			flags |= IXXAT_USB_FDMSG_FLAGS_FDR;
 
 		flags |= IXXAT_USB_ENCODE_DLC(can_fd_len2dlc(cf->len));
+	} else if (cf->can_id & CAN_RTR_FLAG) {
+		flags |= IXXAT_USB_MSG_FLAGS_RTR;
 	} else {
 		flags |= IXXAT_USB_ENCODE_DLC(cf->len);
 	}
