@@ -87,6 +87,76 @@
 #define IXXAT_RESTART_TASK_CYCLE_TIME		20
 #endif
 
+/* ctrltype values are split into upper/lower half:
+ * Bit 15..8 : bus type (0 is reserved)
+ * Bit  7..0 : controller type
+ */
+#define IXXAT_USB_BUSTYPE_RES			0
+#define IXXAT_USB_BUSTYPE_CAN			1
+#define IXXAT_USB_BUSTYPE_LIN			2
+
+#define IXXAT_USB_GET_BUSTYPE(ctrltype)		( ((ctrltype) >> 8) & 0x00FF )
+#define IXXAT_USB_GET_CTRLTYPE(ctrltype)	( (ctrltype) & 0x00FF )
+
+
+#define IXXAT_USB_CAN_CTRL_UNKNOWN		0x00 /* unknown CAN controller */
+#define IXXAT_USB_CAN_CTRL_INTEL_82527		0x01
+#define IXXAT_USB_CAN_CTRL_INTEL_82C200		0x02
+#define IXXAT_USB_CAN_CTRL_INTEL_81C90		0x03
+#define IXXAT_USB_CAN_CTRL_INTEL_81C92		0x04
+#define IXXAT_USB_CAN_CTRL_PHILIPS_SJA1000	0x05
+#define IXXAT_USB_CAN_CTRL_INFINEON_82C900	0x06 /* TwinCAN */
+#define IXXAT_USB_CAN_CTRL_MOTOROLA_TOUCAN	0x07
+#define IXXAT_USB_CAN_CTRL_FREESCALE_STAR12_MSCAN	0x08
+#define IXXAT_USB_CAN_CTRL_FREESCALE_COLDFIRE_FLEXCAN	0x09
+#define IXXAT_USB_CAN_CTRL_IFI_CAN		0x0A /* IFI-CAN ( ALTERA FPGA CAN ) */
+#define IXXAT_USB_CAN_CTRL_BOSCH_CCAN		0x0B /* CCAN ( Bosch C_CAN ) */
+#define IXXAT_USB_CAN_CTRL_ST_BXCAN		0x0C /* ST BX_CAN */
+#define IXXAT_USB_CAN_CTRL_IFI_CANFD		0x0D /* IFI-CANFD ( ALTERA FPGA CAN ) */
+#define IXXAT_USB_CAN_CTRL_MCAN			0x0E /* MCAN (Bosch M_CAN version A) */
+
+/*
+ * Values up to 0x3F are reserved for CAN-only and legacy CAN FD
+ * controllers. The values for new CAN FD controllers are in the
+ * range from 0x40 to 0x7F. The values in the range from 0x80 to
+ * 0xFF are reserved for future extensions.
+ */
+
+#define IXXAT_USB_CAN_CTRL_GENERIC_CANFD	0x40 /* generic CAN FD controller */
+#define IXXAT_USB_CAN_CTRL_IFI_CANFD2		0x41 /* IFI-CANFD */
+#define IXXAT_USB_CAN_CTRL_BOSCH_MCAN_VERSION_B	0x42 /* MCAN (Bosch M_CAN version B) */
+
+/* CAN controller feature flags */
+#define IXXAT_USB_CAN_FEATURE_STDOREXT		0x00000001  /* 11 OR 29 bit (exclusive) */
+#define IXXAT_USB_CAN_FEATURE_STDANDEXT		0x00000002  /* 11 AND 29 bit (simultaneous) */
+#define IXXAT_USB_CAN_FEATURE_RMTFRAME		0x00000004  /* reception of remote frames */
+#define IXXAT_USB_CAN_FEATURE_ERRFRAME		0x00000008  /* reception of error frames */
+#define IXXAT_USB_CAN_FEATURE_BUSLOAD		0x00000010  /* bus load measurement */
+#define IXXAT_USB_CAN_FEATURE_IDFILTER		0x00000020  /* exact message filter */
+#define IXXAT_USB_CAN_FEATURE_LISTONLY		0x00000040  /* listen only mode */
+#define IXXAT_USB_CAN_FEATURE_SCHEDULER		0x00000080  /* cyclic message scheduler */
+#define IXXAT_USB_CAN_FEATURE_GENERRFRM		0x00000100  /* error frame generation */
+#define IXXAT_USB_CAN_FEATURE_DELAYEDTX		0x00000200  /* delayed message transmitter */
+#define IXXAT_USB_CAN_FEATURE_SSM		0x00000400  /* single shot mode */
+#define IXXAT_USB_CAN_FEATURE_HI_PRIO		0x00000800  /* high priority message */
+
+#define IXXAT_USB_CAN_FEATURE_EXTDATA		0x00001000  /* extended data length (CAN FD) */
+#define IXXAT_USB_CAN_FEATURE_FASTDATA		0x00002000  /* fast data bit rate (CAN FD) */
+
+#define IXXAT_USB_CAN_FEATURE_CLRTX		0x00004000  /* single transmission try messages with acknowledge error */
+
+#define IXXAT_USB_CAN_FEATURE_ISOFD		0x00008000  /* i: ISO CAN FD */
+#define IXXAT_USB_CAN_FEATURE_NONISOFD		0x00010000  /* i: non-ISO CAN FD */
+
+#define IXXAT_USB_CAN_FEATURE_AUTOBAUD		0x00020000  /* automatic bit rate detection */
+
+#define IXXAT_USB_CAN_FEATURE_TXSELFACK		0x00040000  /* transmit self acknowledge */
+#define IXXAT_USB_CAN_FEATURE_TXDELAYSEL	0x00080000  /* transmit delay mode selection */
+
+#define IXXAT_USB_CAN_BUSC_UNDEFINED		0x0000
+#define IXXAT_USB_CAN_BUSC_LOWSPEED		0x0001
+#define IXXAT_USB_CAN_BUSC_HIGHSPEED		0x0002
+
 #define IXXAT_USB_CAN_DATA			0x00
 #define IXXAT_USB_CAN_INFO			0x01
 #define IXXAT_USB_CAN_ERROR			0x02
@@ -126,9 +196,17 @@
 #define IXXAT_USB_ENCODE_DLC(len)		\
 				(((len) << 16) & IXXAT_USB_MSG_FLAGS_DLC)
 
+#define IXXAT_USB_MSG_FLAGS_SINGLESHOTMODE	0x00000100
+#define IXXAT_USB_MSG_FLAGS_HIPRIORITY		0x00000200
+
+#define IXXAT_USB_MSG_FLAGS_TXDELAYMODE		0x00002000
+#define IXXAT_USB_MSG_FLAGS_TXDELAYMODE_PRE	0x00000000
+#define IXXAT_USB_MSG_FLAGS_TXDELAYMODE_POST	IXXAT_USB_MSG_FLAGS_TXDELAYMODE
+
 #define IXXAT_USB_FDMSG_FLAGS_EDL		0x00000400
 #define IXXAT_USB_FDMSG_FLAGS_FDR		0x00000800
 #define IXXAT_USB_FDMSG_FLAGS_ESI		0x00001000
+
 
 /* USB command timeout values  */
 /* for IXXAT_USB_BRD_CMD_POWER (wakeup/sleep) */
@@ -284,9 +362,9 @@ struct ixxat_fw_info2 {
 } __packed;
 
 /* struct ixxat_cancaps CAN controller capabilities
- * ctrltype:		Type of CAN controller
- * buscoupling:		Type of Bus coupling
- * features:		supported features
+ * ctrltype;		Type of CAN controller (see IXXAT_USB_CAN_CTRL_ const)
+ * buscoupling;		Type of Bus coupling (see IXXAT_USB_CAN_BUSC_ const)
+ * features;		supported features (see IXXAT_USB_CAN_FEATURE_ constants)
  * can_clock_freq:	clock frequency of the primary counter in Hz
  * ts_clock_divisor:	divisor for the message time stamp counter
  * cms_clock_divisor:	divisor for the cyclic message scheduler
@@ -311,9 +389,9 @@ struct ixxat_cancaps {
 } __packed;
 
 /* struct ixxat_cancaps2 CANFD controller capabilities
- * ctrltype;		Type of CAN controller (see CAN_CTRL_ const)
- * buscoupling;		Type of Bus coupling (see CAN_BUSC_ const)
- * features;		supported features (see CAN_FEATURE_ constants)
+ * ctrltype;		Type of CAN controller (see IXXAT_USB_CAN_CTRL_ const)
+ * buscoupling;		Type of Bus coupling (see IXXAT_USB_CAN_BUSC_ const)
+ * features;		supported features (see IXXAT_USB_CAN_FEATURE_ constants)
  * can_clock_freq:	CAN clock frequency in Hz (16/2 MHz for SJA1000)
  * sdr_range_min;	minimum bit timing values for standard bit rate
  * sdr_range_max;	maximum bit timing values for standard bit rate
