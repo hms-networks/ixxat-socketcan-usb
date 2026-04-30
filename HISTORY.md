@@ -2,6 +2,15 @@
 
 ## History
 
+### 2.1.8	(2026-04-30)
+
+- define and document more feature and message flags
+- change tx path to ignore RTR flag when sending CAN FD messages
+  (align with the behaviour of the Peak driver)
+- add support for single shot messages
+- enable CANFD_ESI flag to be set in tx messages
+  (prepared driver, currently no firmware support)
+
 ### 2.1.7	(2026-04-24)
 
 - add/cleanup documentation
