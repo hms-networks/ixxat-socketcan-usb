@@ -2704,14 +2704,22 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 	union ixxat_usb_cmd *cmdbuf;
 
 	/* command buffer for USB communication */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(7, 0, 0)
 	cmdbuf = kmalloc(sizeof(*cmdbuf), GFP_KERNEL);
+#else
+	cmdbuf = kmalloc_obj(cmdbuf, GFP_KERNEL);
+#endif
 	if (!cmdbuf) {
 		err = -ENOMEM;
 		goto lbl_err;
 	}
 
 	/* shared data per device */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(7, 0, 0)
 	devdata = kzalloc(sizeof(*devdata), GFP_KERNEL);
+#else
+	devdata = kzalloc_obj(devdata, GFP_KERNEL);
+#endif
 	if (!devdata) {
 		err = -ENOMEM;
 		goto lbl_err;
