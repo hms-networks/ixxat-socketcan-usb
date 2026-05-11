@@ -563,7 +563,7 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 				break;
 			}
 			/* Relax before trying again */
-			msleep(1);
+			usleep_range(1000, 2000);
 			continue;
 		case -ETIMEDOUT:
 			/* Didn't wait enough time to wait for the completion */
