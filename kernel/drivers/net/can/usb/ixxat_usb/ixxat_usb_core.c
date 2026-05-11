@@ -492,8 +492,8 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 {
 	struct ixxat_usb_dal_req *dal_req = req;
 	struct ixxat_usb_dal_res *dal_res = res;
-	u8* req_buf = (u8*)devdata->cmdbuf;
-	u8* res_buf = (u8*)devdata->cmdbuf + req_size;
+	u8 *req_buf = (u8 *)devdata->cmdbuf;
+	u8 *res_buf = (u8 *)devdata->cmdbuf + req_size;
 	int i, ret, pos = 0, to;
 	unsigned long timeout;
 
@@ -587,7 +587,7 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 
 		goto fail;
 	}
-	ix_trace_printk ("ret: %d pos: %d res_size: %d", ret, pos, res_size);
+
 
 	/* firmware responses may be smaller than requested response size
 	 * but should be not smaller than the response header size
@@ -1084,6 +1084,7 @@ static int ixxat_usb_restart(struct ixxat_usb_candevice *dev)
 {
 	struct net_device *netdev = dev->netdev;
 	int err = ixxat_usb_stop_ctrl(dev);
+
         if (err) {
                 netdev_err(netdev,
                            "restart: failure to stop controler err=%d\n", err);
@@ -1577,6 +1578,9 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 	int err = 0;
 	u8 *data = urb->transfer_buffer;
 	u32 len = urb->actual_length, pos, size;
+#ifdef IX_CONFIG_USE_HW_TIMESTAMPS
+	u64 time;
+#endif
 
 	for (pos = 0; pos < len; pos += size) {
 		struct ixxat_can_msg can_msg;
@@ -1635,13 +1639,10 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 
 		case IXXAT_USB_CAN_TIMEOVR:
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
-			{
-				u64 time = le32_to_cpu(can_msg.base.msg_id);
+			time = le32_to_cpu(can_msg.base.msg_id);
 				dev->time_ref.ts_overrun_ticks += (time << 32);
-			}
-#endif
 			break;
-
+#endif
 		case IXXAT_USB_CAN_INFO:
 		case IXXAT_USB_CAN_WAKEUP:
 		case IXXAT_USB_CAN_TIMERST:
@@ -2025,6 +2026,7 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 		u8 *buf;
 
 		struct urb *urb = usb_alloc_urb(0, GFP_KERNEL);
+
 		if (!urb) {
 			err = -ENOMEM;
 			netdev_err(netdev, "Error %d: No memory for URBs\n",
@@ -2035,7 +2037,8 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 #ifdef IXXAT_DEBUG
 		ix_trace_printk("setup: kmalloc %x\n", adapter->buffer_size_rx);
 #endif
-		buf = kmalloc(adapter->buffer_size_rx, GFP_KERNEL);
+		u8 *buf = kmalloc(adapter->buffer_size_rx, GFP_KERNEL);
+
 		if (!buf) {
 			usb_free_urb(urb);
 			err = -ENOMEM;
@@ -2106,6 +2109,7 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 		u8 *buf;
 
 		struct urb *urb = usb_alloc_urb(0, GFP_KERNEL);
+
 		if (!urb) {
 			err = -ENOMEM;
 			netdev_err(netdev, "Error %d: No memory for URBs\n",
@@ -2113,7 +2117,8 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 			break;
 		}
 
-		buf = kmalloc(adapter->buffer_size_tx, GFP_KERNEL);
+		u8 *buf = kmalloc(adapter->buffer_size_tx, GFP_KERNEL);
+
 		if (!buf) {
 			usb_free_urb(urb);
 			err = -ENOMEM;
@@ -2121,6 +2126,8 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 				   "Error %d: No memory for USB-buffer\n", err);
 			break;
 		}
+
+		struct ixxat_tx_urb_context *context;
 
 		context = dev->tx_contexts + urb_idx;
 
@@ -2252,10 +2259,11 @@ static void ixxat_usb_disconnect(struct usb_interface *intf)
 	struct ixxat_usb_device_data *devdata;
 
 	struct ixxat_usb_candevice *dev = usb_get_intfdata(intf);
+
 	if (!dev)
 		return;
 
-	devdata = dev->shareddata;
+	struct ixxat_usb_device_data *devdata = dev->shareddata;
 
 	/* unregister the given device and all previous devices */
 	do {
@@ -2280,6 +2288,7 @@ static void ixxat_usb_disconnect(struct usb_interface *intf)
 	/* free the shared data */
 	if (devdata)
 		kfree(devdata->cmdbuf);
+
 	kfree(devdata);
 }
 
@@ -2532,21 +2541,17 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 					 CAN_CTRLMODE_FD |
 					 CAN_CTRLMODE_FD_NON_ISO);
 
-	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_LISTONLY) {
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_LISTONLY)
 		dev->can.ctrlmode_supported |= CAN_CTRLMODE_LISTENONLY;
-	}
 
-	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_SSM) {
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_SSM)
 		dev->can.ctrlmode_supported |= CAN_CTRLMODE_ONE_SHOT;
-	}
 
-	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_ISOFD) {
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_ISOFD)
 		dev->can.ctrlmode_supported |= CAN_CTRLMODE_FD;
-	}
 
-	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_NONISOFD) {
+	if (devdata->caps.features & IXXAT_USB_CAN_FEATURE_NONISOFD)
 		dev->can.ctrlmode_supported |= CAN_CTRLMODE_FD_NON_ISO;
-	}
 
 	/* map function */
 	dev->can.do_set_mode = ixxat_usb_set_mode;
@@ -2735,6 +2740,7 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 		dev_err(&intf->dev, "Failed to get FW info (err %d)\n", err);
 	} else {
 		u32 fw_type = le32_to_cpu(devdata->fw_info.firmware_type);
+
 		if (fw_type != IXXAT_USB_DEV_FWTYPE_BAL) {
 			dev_err(&intf->dev,
 				"Firmware type %u unknown; %u expected\n",
