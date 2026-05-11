@@ -2700,7 +2700,7 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 	struct ixxat_dev_caps dev_caps = {0};
 	u16 ctrlidx, ctrl_count;
 	int err = 0;
-	struct ixxat_usb_device_data *devdata = 0;
+	struct ixxat_usb_device_data *devdata = NULL;
 	union ixxat_usb_cmd *cmdbuf;
 
 	/* command buffer for USB communication */
