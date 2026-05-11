@@ -2024,8 +2024,6 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 	struct usb_device *udev = dev->udev;
 
 	for (urb_idx = 0; urb_idx < IXXAT_USB_MAX_RX_URBS; urb_idx++) {
-		u8 *buf;
-
 		struct urb *urb = usb_alloc_urb(0, GFP_KERNEL);
 
 		if (!urb) {
@@ -2106,9 +2104,6 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 	struct usb_device *udev = dev->udev;
 
 	for (urb_idx = 0; urb_idx < IXXAT_USB_MAX_TX_URBS; urb_idx++) {
-		struct ixxat_tx_urb_context *context;
-		u8 *buf;
-
 		struct urb *urb = usb_alloc_urb(0, GFP_KERNEL);
 
 		if (!urb) {
@@ -2257,8 +2252,6 @@ static const struct attribute_group ixxat_pdev_group = {
  */
 static void ixxat_usb_disconnect(struct usb_interface *intf)
 {
-	struct ixxat_usb_device_data *devdata;
-
 	struct ixxat_usb_candevice *dev = usb_get_intfdata(intf);
 
 	if (!dev)
