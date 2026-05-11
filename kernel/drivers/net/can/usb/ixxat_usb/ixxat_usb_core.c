@@ -504,8 +504,8 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 		return ret;
 	}
 
-	ix_trace_printk("ixxat_usb_send_cmd_internal: cmd 0x%3X to port %u delay %lu ms\n",
-			le32_to_cpu(dal_req->code), port, cmd_delay);
+	ix_trace_printk("%s(): cmd 0x%3X to port %u delay %lu ms\n",
+			__func__, le32_to_cpu(dal_req->code), port, cmd_delay);
 
 	/* showdump(req, req_size); */
 
@@ -543,7 +543,7 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 	/* clear response buffer */
 	memset(res_buf, 0, res_size);
 
-	ix_trace_printk("Wait for response");
+	ix_trace_printk("%s(): Wait for response", __func__);
 
 	/* Wait for the response */
 	to = IXXAT_USB_MSG_TIMEOUT;
@@ -588,6 +588,7 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 		goto fail;
 	}
 
+	ix_trace_printk("ret: %d pos: %d res_size: %d", ret, pos, res_size);
 
 	/* firmware responses may be smaller than requested response size
 	 * but should be not smaller than the response header size
