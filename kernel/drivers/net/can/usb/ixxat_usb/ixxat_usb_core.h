@@ -875,8 +875,8 @@ void ixxat_usb_setup_cmd(struct ixxat_usb_dal_req *req,
  *
  * Return: Negative error code or zero on success
  */
-int ixxat_usb_send_cmd(struct ixxat_usb_candevice *dev, const u16 port, void *req,
-		       const u16 req_size, void *res, const u16 res_size,
-		       const unsigned long cmd_delay);
+int ixxat_usb_send_cmd(struct ixxat_usb_candevice *dev, const u16 port,
+		       void *req, const u16 req_size, void *res,
+		       const u16 res_size, const unsigned long cmd_delay);
 
 #endif /* IXXAT_USB_CORE_H */
