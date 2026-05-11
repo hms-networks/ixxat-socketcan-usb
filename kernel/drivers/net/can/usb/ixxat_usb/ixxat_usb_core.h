@@ -870,7 +870,7 @@ void ixxat_usb_setup_cmd(struct ixxat_usb_dal_req *req,
  * @res: pointer to the response structure
  * @res_size: size of the response structure
  * @cmd_delay: delay in milliseconds to wait for a response
-*
+ *
  * This function sends a specific command to the device
  *
  * Return: Negative error code or zero on success
