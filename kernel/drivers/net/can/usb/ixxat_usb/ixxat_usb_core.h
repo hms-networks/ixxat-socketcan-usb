@@ -813,7 +813,7 @@ struct ixxat_usb_device_data {
 	u32     ts_dev_start;
 
 	/* USB commands buffer */
-	union ixxat_usb_cmd* cmdbuf;
+	union ixxat_usb_cmd *cmdbuf;
 };
 
 /* struct ixxat_usb_adapter IXXAT USB device adapter
