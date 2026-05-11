@@ -95,8 +95,8 @@
 #define IXXAT_USB_BUSTYPE_CAN			1
 #define IXXAT_USB_BUSTYPE_LIN			2
 
-#define IXXAT_USB_GET_BUSTYPE(ctrltype)		( ((ctrltype) >> 8) & 0x00FF )
-#define IXXAT_USB_GET_CTRLTYPE(ctrltype)	( (ctrltype) & 0x00FF )
+#define IXXAT_USB_GET_BUSTYPE(ctrltype)		(((ctrltype) >> 8) & 0x00FF)
+#define IXXAT_USB_GET_CTRLTYPE(ctrltype)	((ctrltype) & 0x00FF)
 
 
 #define IXXAT_USB_CAN_CTRL_UNKNOWN		0x00 /* unknown CAN controller */
