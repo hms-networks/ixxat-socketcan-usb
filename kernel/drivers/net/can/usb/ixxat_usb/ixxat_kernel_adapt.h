@@ -34,10 +34,11 @@
  */
 #define IX_SYNCTOHOSTCLOCK_NONE
 
-/* Exact statistics means that all messages are sent with active self reception  * (overhead) so that the statistic counters are incremented after the message
- * was really written on the CAN bus. Otherwise the counters are incremented
- * upon acknowledgment of the USB packet containing the frame by the kernel's
- * USB subsystem.
+/* Exact statistics means that all messages are sent with active self
+ * reception (overhead) so that the statistic counters are incremented after
+ * the message was really written on the CAN bus. Otherwise the counters are
+ * incremented upon acknowledgment of the USB packet containing the frame by
+ * the kernel's USB subsystem.
  *
  * CL1 firmwares can't do exact statistics.
  *
