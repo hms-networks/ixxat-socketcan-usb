@@ -27,15 +27,6 @@
 #define IXXAT_DEBUG
 #endif
 
-#if defined(CONFIG_TRACING) && defined(DEBUG)
-#define ix_trace_printk(...)		trace_printk(__VA_ARGS__)
-#elif defined(IXXAT_DEBUG)
-#define ix_trace_printk(...)		pr_info(__VA_ARGS__)
-#else
-#define ix_trace_printk(...)
-#endif
-#endif
-
 MODULE_AUTHOR("HMS Technology Center GmbH <socketcan@hms-networks.com>");
 MODULE_DESCRIPTION("SocketCAN driver for HMS Ixxat USB-to-CAN V2, USB-to-CAN-FD family adapters");
 MODULE_LICENSE("GPL v2");
@@ -227,10 +218,10 @@ static void showdevcaps(struct ixxat_dev_caps *dev_caps)
 {
 	int i, bus_ctrl_count = le16_to_cpu(dev_caps->bus_ctrl_count);
 
-	ix_trace_printk(KBUILD_MODNAME ": CtrlCount = %d\n", bus_ctrl_count);
+	pr_info(KBUILD_MODNAME ": CtrlCount = %d\n", bus_ctrl_count);
 	for (i = 0; i < bus_ctrl_count; i++)
-		ix_trace_printk(KBUILD_MODNAME ": Type = %d\n",
-				dev_caps->bus_ctrl_types[i]);
+		pr_info(KBUILD_MODNAME ": Type = %d\n",
+			dev_caps->bus_ctrl_types[i]);
 }
 
 static void showdump(u8 *pbdata, u16 length)
@@ -247,7 +238,7 @@ static void showdump(u8 *pbdata, u16 length)
 
 	dump[l-1] = '\n';
 
-	ix_trace_printk(KBUILD_MODNAME ": %s", dump);
+	pr_info(KBUILD_MODNAME ": %s", dump);
 }
 #endif
 
@@ -504,11 +495,9 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 		return ret;
 	}
 
-	ix_trace_printk("%s(): cmd 0x%3X to port %u delay %lu ms\n",
-			__func__, le32_to_cpu(dal_req->code), port, cmd_delay);
-
-	/* showdump(req, req_size); */
-
+#if 0
+	showdump(req, req_size);
+#endif
 	/* copy request to command buffer */
 	memcpy(req_buf, req, req_size);
 
@@ -543,8 +532,6 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 	/* clear response buffer */
 	memset(res_buf, 0, res_size);
 
-	ix_trace_printk("%s(): Wait for response", __func__);
-
 	/* Wait for the response */
 	to = IXXAT_USB_MSG_TIMEOUT;
 	timeout = jiffies + msecs_to_jiffies(cmd_delay);
@@ -572,8 +559,6 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 		default:
 			/* Got something? */
 			if (ret > 0) {
-				ix_trace_printk("got response size: %d", ret);
-
 				pos += ret;
 
 				/* Got  the entire response? */
@@ -587,8 +572,6 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 
 		goto fail;
 	}
-
-	ix_trace_printk("ret: %d pos: %d res_size: %d", ret, pos, res_size);
 
 	/* firmware responses may be smaller than requested response size
 	 * but should be not smaller than the response header size
@@ -608,7 +591,6 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 	}
 
 fail:
-	ix_trace_printk("Mutex unlock");
 	mutex_unlock(&devdata->cmd_channel_lock);
 
 	return ret;
@@ -2033,9 +2015,6 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 			break;
 		}
 
-#ifdef IXXAT_DEBUG
-		ix_trace_printk("setup: kmalloc %x\n", adapter->buffer_size_rx);
-#endif
 		u8 *buf = kmalloc(adapter->buffer_size_rx, GFP_KERNEL);
 
 		if (!buf) {
@@ -2048,9 +2027,6 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 
 		dev->rx_buf[urb_idx] = buf;
 
-#ifdef IXXAT_DEBUG
-		ix_trace_printk("setup: fill_bulk_urb %i\n", dev->ep_msg_in);
-#endif
 		usb_fill_bulk_urb(urb, udev,
 				  usb_rcvbulkpipe(udev, dev->ep_msg_in), buf,
 				  adapter->buffer_size_rx,
@@ -2700,7 +2676,7 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 #if LINUX_VERSION_CODE < KERNEL_VERSION(7, 0, 0)
 	cmdbuf = kmalloc(sizeof(*cmdbuf), GFP_KERNEL);
 #else
-	cmdbuf = kmalloc_obj(cmdbuf, GFP_KERNEL);
+	cmdbuf = kmalloc_obj(*cmdbuf, GFP_KERNEL);
 #endif
 	if (!cmdbuf) {
 		err = -ENOMEM;
@@ -2711,7 +2687,7 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 #if LINUX_VERSION_CODE < KERNEL_VERSION(7, 0, 0)
 	devdata = kzalloc(sizeof(*devdata), GFP_KERNEL);
 #else
-	devdata = kzalloc_obj(devdata, GFP_KERNEL);
+	devdata = kzalloc_obj(*devdata, GFP_KERNEL);
 #endif
 	if (!devdata) {
 		err = -ENOMEM;
