@@ -2436,9 +2436,6 @@ static int ixxat_ethtool_op_get_ts_info_hwts(struct net_device *dev,
 #ifdef IX_STATISTICS_EXACT
 	info->tx_types = BIT(HWTSTAMP_TX_ON);
 #else
-	/* if not using exact statistics, don't support tx timestamping as CL1
-	 * fw can't handle client id in case of tx timestamping
-	 */
 	info->tx_types = BIT(HWTSTAMP_TX_OFF);
 #endif
 #else
