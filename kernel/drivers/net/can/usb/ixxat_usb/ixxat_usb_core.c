@@ -2407,14 +2407,6 @@ static const struct net_device_ops ixxat_usb_netdev_ops = {
 #endif
 };
 
-#ifdef IX_CONFIG_USE_HW_TIMESTAMPS
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
-#ifdef IX_STATISTICS_EXACT
-/* Use generic implementation */
-static const struct ethtool_ops ixxat_ethtool_ops = {
-	.get_ts_info = can_ethtool_op_get_ts_info_hwts
-};
-#else
 /* ixxat_ethtool_op_get_ts_info_hwts - get timestamping info
  * @dev: pointer to the network device
  * @info: pointer to the structure to fill with timestamping information
@@ -2430,11 +2422,28 @@ static int ixxat_ethtool_op_get_ts_info_hwts(struct net_device *dev,
 {
 	info->so_timestamping = SOF_TIMESTAMPING_TX_SOFTWARE |
 				SOF_TIMESTAMPING_RX_SOFTWARE |
-				SOF_TIMESTAMPING_SOFTWARE |
+#ifdef IX_CONFIG_USE_HW_TIMESTAMPS
+#ifdef IX_STATISTICS_EXACT
+				SOF_TIMESTAMPING_TX_HARDWARE |
+#endif
 				SOF_TIMESTAMPING_RX_HARDWARE |
-				SOF_TIMESTAMPING_RAW_HARDWARE;
+				SOF_TIMESTAMPING_RAW_HARDWARE |
+#endif
+				SOF_TIMESTAMPING_SOFTWARE;
+
 	info->phc_index = -1;
+#ifdef IX_CONFIG_USE_HW_TIMESTAMPS
+#ifdef IX_STATISTICS_EXACT
+	info->tx_types = BIT(HWTSTAMP_TX_ON);
+#else
+	/* if not using exact statistics, don't support tx timestamping as CL1
+	 * fw can't handle client id in case of tx timestamping
+	 */
 	info->tx_types = BIT(HWTSTAMP_TX_OFF);
+#endif
+#else
+	info->tx_types = BIT(HWTSTAMP_TX_OFF);
+#endif
 	info->rx_filters = BIT(HWTSTAMP_FILTER_ALL);
 
 	return 0;
@@ -2443,9 +2452,6 @@ static int ixxat_ethtool_op_get_ts_info_hwts(struct net_device *dev,
 static const struct ethtool_ops ixxat_ethtool_ops = {
 	.get_ts_info = ixxat_ethtool_op_get_ts_info_hwts,
 };
-#endif
-#endif
-#endif
 
 /* ixxat_usb_create_ctrl - create a CAN controller for the IXXAT USB device
  * @intf: pointer to the USB interface
@@ -2541,9 +2547,9 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	/* configure netdev */
 	netdev->flags |= IFF_ECHO;
 	netdev->netdev_ops = &ixxat_usb_netdev_ops;
-#ifdef IX_CONFIG_USE_HW_TIMESTAMPS
 	netdev->ethtool_ops = &ixxat_ethtool_ops;
 
+#ifdef IX_CONFIG_USE_HW_TIMESTAMPS
 	ts_clock_divisor = le32_to_cpu(devdata->caps.ts_clock_divisor);
 	ts_clock_freq  = le32_to_cpu(devdata->caps.ts_clock_freq);
 
