@@ -489,7 +489,7 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 	int i, ret, pos = 0, to;
 	unsigned long timeout;
 
-    	ret = mutex_lock_interruptible(&devdata->cmd_channel_lock);
+	ret = mutex_lock_interruptible(&devdata->cmd_channel_lock);
 	if (ret < 0) {
 		dev_err(&dev->dev, KBUILD_MODNAME
 			": Error %x: Mutex lock interrupted\n", ret);
@@ -1069,18 +1069,18 @@ static int ixxat_usb_restart(struct ixxat_usb_candevice *dev)
 	struct net_device *netdev = dev->netdev;
 	int err = ixxat_usb_stop_ctrl(dev);
 
-        if (err) {
-                netdev_err(netdev,
-                           "restart: failure to stop controler err=%d\n", err);
-                goto fail;
-        }
+	if (err) {
+		netdev_err(netdev,
+			   "restart: failure to stop controler err=%d\n", err);
+		goto fail;
+	}
 
-        err = ixxat_usb_start_ctrl(dev);
-        if (err) {
-                netdev_err(netdev,
-                           "restart: failure to start controler err=%d\n", err);
-                goto fail;
-        }
+	err = ixxat_usb_start_ctrl(dev);
+	if (err) {
+		netdev_err(netdev,
+			   "restart: failure to start controler err=%d\n", err);
+		goto fail;
+	}
 
 	dev->can.state = CAN_STATE_ERROR_ACTIVE;
 	netif_wake_queue(netdev);
@@ -1168,11 +1168,10 @@ static void ixxat_convert(const struct ixxat_usb_adapter *adapter,
 
 	if (ixx_flags & IXXAT_USB_MSG_FLAGS_RTR)
 		cf->can_id |= CAN_RTR_FLAG;
-
 	else if (adapter == &usb2can_cl1)
-			memcpy(cf->data, rx->cl1.data, datalen);
-		else
-			memcpy(cf->data, rx->cl2.data, datalen);
+		memcpy(cf->data, rx->cl1.data, datalen);
+	else
+		memcpy(cf->data, rx->cl2.data, datalen);
 }
 
 #if LINUX_VERSION_CODE <= KERNEL_VERSION(5, 8, 0)
@@ -2515,7 +2514,7 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	dev->can.ctrlmode_supported = adapter->modes;
 
 	dev->can.ctrlmode_supported &= ~(CAN_CTRLMODE_LISTENONLY |
-		                         CAN_CTRLMODE_ONE_SHOT |
+					 CAN_CTRLMODE_ONE_SHOT |
 					 CAN_CTRLMODE_FD |
 					 CAN_CTRLMODE_FD_NON_ISO);
 
