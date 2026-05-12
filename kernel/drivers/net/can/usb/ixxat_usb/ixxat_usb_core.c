@@ -2472,10 +2472,10 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	struct usb_device *udev = interface_to_usbdev(intf);
 	struct ixxat_usb_candevice *dev;
 	struct net_device *netdev;
-	int i, err;
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
 	u32 ts_clock_divisor, ts_clock_freq;
 #endif
+	int i, err;
 
 	/* number of echo_skb */
 	netdev = alloc_candev(sizeof(*dev), IXXAT_USB_MAX_MSGS);
@@ -2614,6 +2614,7 @@ free_candev:
 	sysfs_remove_group(&netdev->dev.kobj, &ixxat_pdev_group);
 	usb_set_intfdata(intf, dev->prev_dev);
 	free_candev(netdev);
+
 	return err;
 }
 
