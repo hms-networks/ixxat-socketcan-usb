@@ -2407,7 +2407,7 @@ static const struct net_device_ops ixxat_usb_netdev_ops = {
 #endif
 };
 
-/* ixxat_ethtool_op_get_ts_info_hwts - get timestamping info
+/* ixxat_ethtool_op_get_ts_info - get timestamping info
  * @dev: pointer to the network device
  * @info: pointer to the structure to fill with timestamping information
  *
@@ -2417,8 +2417,8 @@ static const struct net_device_ops ixxat_usb_netdev_ops = {
  *
  * Returns always 0.
  */
-static int ixxat_ethtool_op_get_ts_info_hwts(struct net_device *dev,
-					     struct kernel_ethtool_ts_info *info)
+static int ixxat_ethtool_op_get_ts_info(struct net_device *dev,
+					struct kernel_ethtool_ts_info *info)
 {
 	info->so_timestamping = SOF_TIMESTAMPING_TX_SOFTWARE |
 				SOF_TIMESTAMPING_RX_SOFTWARE |
@@ -2448,7 +2448,7 @@ static int ixxat_ethtool_op_get_ts_info_hwts(struct net_device *dev,
 
 /* Use IXXAT specific implementation */
 static const struct ethtool_ops ixxat_ethtool_ops = {
-	.get_ts_info = ixxat_ethtool_op_get_ts_info_hwts,
+	.get_ts_info = ixxat_ethtool_op_get_ts_info,
 };
 
 /* ixxat_usb_create_ctrl - create a CAN controller for the IXXAT USB device
