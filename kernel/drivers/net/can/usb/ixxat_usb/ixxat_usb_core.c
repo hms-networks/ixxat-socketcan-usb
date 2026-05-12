@@ -2007,6 +2007,7 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 
 	for (urb_idx = 0; urb_idx < IXXAT_USB_MAX_RX_URBS; urb_idx++) {
 		struct urb *urb = usb_alloc_urb(0, GFP_KERNEL);
+		u8 *buf;
 
 		if (!urb) {
 			err = -ENOMEM;
@@ -2015,8 +2016,7 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 			break;
 		}
 
-		u8 *buf = kmalloc(adapter->buffer_size_rx, GFP_KERNEL);
-
+		buf = kmalloc(adapter->buffer_size_rx, GFP_KERNEL);
 		if (!buf) {
 			usb_free_urb(urb);
 			err = -ENOMEM;
@@ -2081,6 +2081,8 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 
 	for (urb_idx = 0; urb_idx < IXXAT_USB_MAX_TX_URBS; urb_idx++) {
 		struct urb *urb = usb_alloc_urb(0, GFP_KERNEL);
+		struct ixxat_tx_urb_context *context;
+		u8 *buf;
 
 		if (!urb) {
 			err = -ENOMEM;
@@ -2089,8 +2091,7 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 			break;
 		}
 
-		u8 *buf = kmalloc(adapter->buffer_size_tx, GFP_KERNEL);
-
+		buf = kmalloc(adapter->buffer_size_tx, GFP_KERNEL);
 		if (!buf) {
 			usb_free_urb(urb);
 			err = -ENOMEM;
@@ -2098,8 +2099,6 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 				   "Error %d: No memory for USB-buffer\n", err);
 			break;
 		}
-
-		struct ixxat_tx_urb_context *context;
 
 		context = dev->tx_contexts + urb_idx;
 
@@ -2229,11 +2228,12 @@ static const struct attribute_group ixxat_pdev_group = {
 static void ixxat_usb_disconnect(struct usb_interface *intf)
 {
 	struct ixxat_usb_candevice *dev = usb_get_intfdata(intf);
+	struct ixxat_usb_device_data *devdata;
 
 	if (!dev)
 		return;
 
-	struct ixxat_usb_device_data *devdata = dev->shareddata;
+	devdata = dev->shareddata;
 
 	/* unregister the given device and all previous devices */
 	do {
