@@ -26,6 +26,7 @@
 #ifdef DEBUG
 #define IXXAT_DEBUG
 #endif
+#endif
 
 MODULE_AUTHOR("HMS Technology Center GmbH <socketcan@hms-networks.com>");
 MODULE_DESCRIPTION("SocketCAN driver for HMS Ixxat USB-to-CAN V2, USB-to-CAN-FD family adapters");
