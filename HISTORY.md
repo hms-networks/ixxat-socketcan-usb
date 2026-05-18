@@ -2,6 +2,40 @@
 
 ## History
 
+### 2.1.9	(2026-05-18)
+
+- refactor: remove C99 coding style for some variables definition.
+- fix build on kernels < version 6.0.0
+- refactor: rename ethtool timestamping function to respect 80 columns limit
+- refactor: remove comment regarding tx timestamping in ethtool operation 
+            from the intree variant
+- refactor: improve code formatting and consistency to match linux coding style
+- refactor: fix preprocessor directive placement for IXXAT_DEBUG definition
+- refactor: add comment to clarify usage of IXXAT specific implementation in
+            ethtool_ops
+- refactor: move variable declarations for clarity in ixxat_usb_create_ctrl function
+- refactor: streamline timestamping logic in ethtool operations for clarity and
+            maintainability, depending on IX_STATISTICS_EXACT and 
+            IX_CONFIG_USE_HW_TIMESTAMPS definition
+- refactor: improve comment formatting for exact statistics in ixxat_kernel_adapt.h
+- refactor: replace ix_trace_printk with pr_info for consistent logging, and
+            remove other dev debug usages then finally remove its useless definition
+- refactor: remove unused variables in ixxat_usb_setup_rx_urbs,
+            ixxat_usb_setup_tx_urbs, and ixxat_usb_disconnect for cleaner code
+- refactor: improve comment formatting in ixxat_usb_setup_cmd for clarity
+- refactor: adjust parameter formatting in ixxat_usb_send_cmd for consistency
+- refactor: adjust pointer formatting for cmdbuf in ixxat_usb_device_data for
+            consistency
+- refactor: improve macro formatting for better readability in ixxat_usb_core.h
+- refactor: update memory allocation for command buffer and device data in
+            ixxat_usb_probe for kernel version compatibility
+- fix: initialize devdata to NULL instead of 0 in ixxat_usb_probe for clarity
+- refactor: replace msleep with usleep_range for improved timing precision in
+            ixxat_usb_send_cmd_internal
+- refactor: enhance logging in ixxat_usb_send_cmd_internal for better traceability
+            *but* usage of ix_trace_printk() SHOULD be reviewed
+- refactor: clean up code formatting and improve readability in ixxat_usb_core.c
+
 ### 2.1.8	(2026-04-30)
 
 - define and document more feature and message flags
