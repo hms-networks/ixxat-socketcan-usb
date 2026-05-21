@@ -2417,7 +2417,7 @@ static const struct net_device_ops ixxat_usb_netdev_ops = {
  *
  * Returns always 0.
  */
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0)
 static int ixxat_ethtool_op_get_ts_info(struct net_device *dev,
 					struct kernel_ethtool_ts_info *info)
 #else
