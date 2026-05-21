@@ -2,6 +2,10 @@
 
 ## History
 
+### 2.1.10	(2026-05-21)
+
+- fix use of struct kernel_ethtool_ts_info which is defined from kernel version >= 6.11.0
+
 ### 2.1.9	(2026-05-18)
 
 - refactor: remove C99 coding style for some variables definition.
