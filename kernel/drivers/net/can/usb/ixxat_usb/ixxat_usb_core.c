@@ -30,7 +30,7 @@
 
 MODULE_AUTHOR("HMS Technology Center GmbH <socketcan@hms-networks.com>");
 MODULE_DESCRIPTION("SocketCAN driver for HMS Ixxat USB-to-CAN V2, USB-to-CAN-FD family adapters");
-MODULE_LICENSE("GPL v2");
+MODULE_LICENSE("GPL");
 
 /* minimum firmware version that supports V2 communication layer */
 #define IX_MIN_MAJORFWVERSION_SUPP_V2	0x01
@@ -80,50 +80,61 @@ static const struct ixxat_driver_info legacy_usb2can_compact = {
 	.adapter = &usb2can_cl1,
 	.is_legacy = true,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_embedded = {
 	.name = "IXXAT USB Embedded",
 	.adapter = &usb2can_cl1,
 	.is_legacy = true,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_pro = {
 	.name = "IXXAT USB Professional",
 	.adapter = &usb2can_cl1,
 	.is_legacy = true,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_auto = {
 	.name = "IXXAT USB Automotive",
 	.adapter = &usb2can_cl1,
 	.is_legacy = true,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_plugin = {
 	.name = "IXXAT USB Plugin",
 	.adapter = &usb2can_cl1,
 	.is_legacy = true,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_fd_compact = {
 	.name = "IXXAT USB Compact FD",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_fd_pro = {
 	.name = "IXXAT USB Professional FD",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_fd_auto = {
 	.name = "IXXAT USB Automotive FD",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info legacy_usb2can_fd_pcie_mini = {
 	.name = "IXXAT USB PCIE Mini FD",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info legacy_usb2car = {
 	.name = "IXXAT USB-to-Car",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info legacy_can_idm101 = {
 	.name = "IXXAT IDM 101",
 	.adapter = &can_fd_idm,
 };
+
 static const struct ixxat_driver_info legacy_can_idm200 = {
 	.name = "IXXAT IDM 200",
 	.adapter = &can_fd_idm,
@@ -134,18 +145,22 @@ static const struct ixxat_driver_info usb2can_fd_pro = {
 	.name = "Ixxat USB-to-CAN/FD Pro",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info usb2can_fd_std = {
 	.name = "Ixxat USB-to-CAN/FD Standard",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info usb2can_fd_std_card = {
 	.name = "Ixxat USB-to-CAN/FD Standard Card",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info usb2can_fd_pro_module = {
 	.name = "Ixxat USB-to-CAN/FD Pro Module",
 	.adapter = &usb2can_fd,
 };
+
 static const struct ixxat_driver_info usb2can_fd_standard_module = {
 	.name = "Ixxat USB-to-CAN/FD Standard Module",
 	.adapter = &usb2can_fd,
@@ -308,8 +323,8 @@ static const struct ixxat_usb_adapter *
 	const struct ixxat_driver_info *drv_info =
 		(const struct ixxat_driver_info *)id->driver_info;
 
-	if ((drv_info->adapter == &usb2can_cl1) &&
-	    (ixxat_usb_has_cl2_firmware(id, dev_fwinfo)))
+	if (drv_info->adapter == &usb2can_cl1 &&
+	    ixxat_usb_has_cl2_firmware(id, dev_fwinfo))
 		return &usb2can_v2;
 
 	return drv_info->adapter;
@@ -347,8 +362,8 @@ static struct ixxat_tx_urb_context *
 
 	for (i = 0; i < IXXAT_USB_MAX_TX_URBS; i++) {
 		/* is urb allocated and free */
-		if ((dev->tx_contexts[i].urb) &&
-		    (dev->tx_contexts[i].urb_index == IXXAT_USB_FREE_ENTRY)) {
+		if (dev->tx_contexts[i].urb &&
+		    dev->tx_contexts[i].urb_index == IXXAT_USB_FREE_ENTRY) {
 			context = &dev->tx_contexts[i];
 			context->urb_index = i;
 			break;
@@ -613,14 +628,15 @@ fail:
  * Returns >= 0 on success, negative error code on failure.
  * If the response size is wrong it returns -EBADMSG.
  */
-int ixxat_usb_send_cmd(struct ixxat_usb_candevice *pdev, const u16 port, void *req,
-		       const u16 req_size, void *res, const u16 res_size,
-		       const unsigned long cmd_delay)
+int ixxat_usb_send_cmd(struct ixxat_usb_candevice *pdev, const u16 port,
+		       void *req, const u16 req_size, void *res,
+		       const u16 res_size, const unsigned long cmd_delay)
 {
 	struct usb_device *dev = pdev->udev;
 	struct ixxat_usb_device_data *devdata = pdev->shareddata;
 
-	return ixxat_usb_send_cmd_internal(dev, devdata, port, req, req_size, res, res_size, cmd_delay);
+	return ixxat_usb_send_cmd_internal(dev, devdata, port, req, req_size,
+					   res, res_size, cmd_delay);
 }
 
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
@@ -648,8 +664,7 @@ static void ixxat_usb_ts_set_cancaps(struct ixxat_time_ref *timeref,
 
 	/* remove not significant zero bits from multiplier and divider */
 	while (!(timeref->tick_multiplier & 0x1) &&
-		!(timeref->tick_divider & 0x1)) {
-
+	       !(timeref->tick_divider & 0x1)) {
 		timeref->tick_multiplier >>= 1;
 		timeref->tick_divider >>= 1;
 	}
@@ -761,8 +776,10 @@ static int ixxat_usb_get_dev_caps(struct usb_device *dev,
 	cmd.req.code = cpu_to_le32(IXXAT_USB_BRD_CMD_GET_DEVCAPS);
 	cmd.res.res_size = cpu_to_le32(rcv_size);
 
-	err = ixxat_usb_send_cmd_internal(dev, devdata, le16_to_cpu(cmd.req.port), &cmd, snd_size,
-				 &cmd.res, rcv_size, IXXAT_USB_CMD_TIMEOUT);
+	err = ixxat_usb_send_cmd_internal(dev, devdata,
+					  le16_to_cpu(cmd.req.port), &cmd,
+					  snd_size, &cmd.res, rcv_size,
+					  IXXAT_USB_CMD_TIMEOUT);
 	if (err)
 		return err;
 
@@ -803,8 +820,10 @@ static int ixxat_usb_get_dev_info(struct usb_device *dev,
 	cmd.req.code = cpu_to_le32(IXXAT_USB_BRD_CMD_GET_DEVINFO);
 	cmd.res.res_size = cpu_to_le32(rcv_size);
 
-	err = ixxat_usb_send_cmd_internal(dev, devdata, le16_to_cpu(cmd.req.port), &cmd, snd_size,
-				 &cmd.res, rcv_size, IXXAT_USB_CMD_TIMEOUT);
+	err = ixxat_usb_send_cmd_internal(dev, devdata,
+					  le16_to_cpu(cmd.req.port), &cmd,
+					  snd_size, &cmd.res, rcv_size,
+					  IXXAT_USB_CMD_TIMEOUT);
 	if (!err) {
 		struct ixxat_dev_info *dev_info = &devdata->dev_info;
 
@@ -842,8 +861,10 @@ static int ixxat_usb_get_fw_info(struct usb_device *dev,
 	cmd.req.code = cpu_to_le32(IXXAT_USB_BRD_CMD_GET_FWINFO);
 	cmd.res.res_size = cpu_to_le32(rcv_size);
 
-	err = ixxat_usb_send_cmd_internal(dev, devdata, le16_to_cpu(cmd.req.port), &cmd, snd_size,
-				 &cmd.res, rcv_size, IXXAT_USB_CMD_TIMEOUT);
+	err = ixxat_usb_send_cmd_internal(dev, devdata,
+					  le16_to_cpu(cmd.req.port), &cmd,
+					  snd_size, &cmd.res, rcv_size,
+					  IXXAT_USB_CMD_TIMEOUT);
 	if (!err) {
 		struct ixxat_fw_info2 *fw_info = &devdata->fw_info;
 
@@ -879,8 +900,10 @@ static int ixxat_usb_get_fw_info2(struct usb_device *dev,
 	cmd.req.code = cpu_to_le32(IXXAT_USB_BRD_CMD_GET_FWINFO2);
 	cmd.res.res_size = cpu_to_le32(rcv_size);
 
-	err = ixxat_usb_send_cmd_internal(dev, devdata, le16_to_cpu(cmd.req.port), &cmd, snd_size,
-				 &cmd.res, rcv_size, IXXAT_USB_CMD_TIMEOUT);
+	err = ixxat_usb_send_cmd_internal(dev, devdata,
+					  le16_to_cpu(cmd.req.port), &cmd,
+					  snd_size, &cmd.res, rcv_size,
+					  IXXAT_USB_CMD_TIMEOUT);
 	if (!err) {
 		struct ixxat_fw_info2 *fw_info = &devdata->fw_info;
 
@@ -1071,14 +1094,15 @@ static int ixxat_usb_restart(struct ixxat_usb_candevice *dev)
 
 	if (err) {
 		netdev_err(netdev,
-			   "restart: failure to stop controler err=%d\n", err);
+			   "restart: failure to stop controller err=%d\n", err);
 		goto fail;
 	}
 
 	err = ixxat_usb_start_ctrl(dev);
 	if (err) {
 		netdev_err(netdev,
-			   "restart: failure to start controler err=%d\n", err);
+			   "restart: failure to start controller err=%d\n",
+			   err);
 		goto fail;
 	}
 
@@ -1574,8 +1598,8 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 		 * variable to avoid bus violation.
 		 */
 		size = data[pos] + 1;
-		if ((size > sizeof(can_msg)) ||
-		    (size < sizeof(struct ixxat_can_msg_base))) {
+		if (size > sizeof(can_msg) ||
+		    size < sizeof(struct ixxat_can_msg_base)) {
 			err = -EBADMSG;
 			netdev_err(netdev, "USB invalid msg size %u\n", size);
 			break;
@@ -1583,7 +1607,7 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 
 		memcpy(&can_msg, data + pos, size);
 		if (!can_msg.base.size) {
-			err = -ENOTSUPP;
+			err = -EOPNOTSUPP;
 			netdev_err(netdev, "Error %d: USB Unsupported msg\n",
 				   err);
 			break;
@@ -1796,15 +1820,16 @@ static void ixxat_usb_read_bulk_callback(struct urb *urb)
 	struct net_device *netdev;
 	int err;
 
-	BUG_ON(!dev);
+	if (WARN_ON_ONCE(!dev))
+		return;
 
 	netdev = dev->netdev;
 
 	err = ixxat_evaluate_usb_status(netdev, urb, dev->ep_msg_in);
 	switch (err) {
 	case 0:
-		if ((urb->actual_length > 0) &&
-		    (dev->state & IXXAT_USB_STATE_STARTED)) {
+		if (urb->actual_length > 0 &&
+		    dev->state & IXXAT_USB_STATE_STARTED) {
 			err = ixxat_usb_decode_buf(urb);
 			if (err)
 				return;
@@ -1833,7 +1858,7 @@ static void ixxat_usb_read_bulk_callback(struct urb *urb)
 			netif_device_detach(netdev);
 		else
 			netdev_err(netdev,
-				"Rx urb resubmit failure (err %d)\n", err);
+				   "Rx urb resubmit failure (err %d)\n", err);
 	}
 }
 
@@ -1851,7 +1876,8 @@ static void ixxat_usb_write_bulk_callback(struct urb *urb)
 	u32 msg_idx;
 	int err;
 
-	BUG_ON(!context);
+	if (WARN_ON_ONCE(!context))
+		return;
 
 	dev = context->dev;
 	netdev = dev->netdev;
@@ -2053,9 +2079,9 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 		usb_free_urb(urb);
 	}
 
-	if (!urb_idx)
+	if (!urb_idx) {
 		netdev_err(netdev, "Couldn't setup any rx-URBs\n");
-	else if (urb_idx < IXXAT_USB_MAX_RX_URBS) {
+	} else if (urb_idx < IXXAT_USB_MAX_RX_URBS) {
 		netdev_warn(netdev, "Rx performance may be slow\n");
 		err = 0;
 	}
@@ -2113,9 +2139,9 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 		urb->transfer_flags |= URB_FREE_BUFFER;
 	}
 
-	if (!urb_idx)
+	if (!urb_idx) {
 		netdev_err(netdev, "Couldn't setup any tx-URBs\n");
-	else if (urb_idx < IXXAT_USB_MAX_TX_URBS) {
+	} else if (urb_idx < IXXAT_USB_MAX_TX_URBS) {
 		netdev_warn(netdev, "Tx performance may be slow\n");
 		err = 0;
 	}
@@ -2137,8 +2163,8 @@ static ssize_t serial_show(struct device *pdev, struct device_attribute *attr,
 
 	return (devdata) ?
 		snprintf(buf, PAGE_SIZE, "%.*s\n",
-			(int)sizeof(devdata->dev_info.device_id),
-			devdata->dev_info.device_id) :
+			 (int)sizeof(devdata->dev_info.device_id),
+			 devdata->dev_info.device_id) :
 		0;
 }
 static DEVICE_ATTR_RO(serial);

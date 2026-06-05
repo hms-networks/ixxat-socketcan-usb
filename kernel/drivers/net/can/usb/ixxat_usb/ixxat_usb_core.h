@@ -98,7 +98,6 @@
 #define IXXAT_USB_GET_BUSTYPE(ctrltype)		(((ctrltype) >> 8) & 0x00FF)
 #define IXXAT_USB_GET_CTRLTYPE(ctrltype)	((ctrltype) & 0x00FF)
 
-
 #define IXXAT_USB_CAN_CTRL_UNKNOWN		0x00 /* unknown CAN controller */
 #define IXXAT_USB_CAN_CTRL_INTEL_82527		0x01
 #define IXXAT_USB_CAN_CTRL_INTEL_82C200		0x02
@@ -143,7 +142,7 @@
 #define IXXAT_USB_CAN_FEATURE_EXTDATA		0x00001000  /* extended data length (CAN FD) */
 #define IXXAT_USB_CAN_FEATURE_FASTDATA		0x00002000  /* fast data bit rate (CAN FD) */
 
-#define IXXAT_USB_CAN_FEATURE_CLRTX		0x00004000  /* single transmission try messages with acknowledge error */
+#define IXXAT_USB_CAN_FEATURE_CLRTX		0x00004000  /* single tx try msg with ack error */
 
 #define IXXAT_USB_CAN_FEATURE_ISOFD		0x00008000  /* i: ISO CAN FD */
 #define IXXAT_USB_CAN_FEATURE_NONISOFD		0x00010000  /* i: non-ISO CAN FD */
@@ -206,7 +205,6 @@
 #define IXXAT_USB_FDMSG_FLAGS_EDL		0x00000400
 #define IXXAT_USB_FDMSG_FLAGS_FDR		0x00000800
 #define IXXAT_USB_FDMSG_FLAGS_ESI		0x00001000
-
 
 /* USB command timeout values  */
 /* for IXXAT_USB_BRD_CMD_POWER (wakeup/sleep) */
@@ -793,7 +791,6 @@ union ixxat_usb_cmd {
  * @ts_dev_start: Device start time
  */
 struct ixxat_usb_device_data {
-
 	/* used to lock write access to the device members */
 	spinlock_t access_lock;
 
