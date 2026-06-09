@@ -190,7 +190,7 @@ static const struct usb_device_id ixxat_usb_table[] = {
 	  .driver_info = (kernel_ulong_t)&legacy_usb2can_fd_compact,
 	},
 	{ USB_DEVICE(IXXAT_USB_VENDOR_ID_LEGACY,
-		     USB2CAN_FD_PROFESSIONAL_PRODUCT_ID),
+		     USB2CAN_FD_EMBEDDED_PRODUCT_ID),
 	  .driver_info = (kernel_ulong_t)&legacy_usb2can_fd_pro,
 	},
 	{ USB_DEVICE(IXXAT_USB_VENDOR_ID_LEGACY,
