@@ -2579,6 +2579,8 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	netdev->flags |= IFF_ECHO;
 	netdev->netdev_ops = &ixxat_usb_netdev_ops;
 	netdev->ethtool_ops = &ixxat_ethtool_ops;
+	netdev->dev_id = ctrl_index;
+	netdev->dev_port = ctrl_index;
 
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
 	ts_clock_divisor = le32_to_cpu(devdata->caps.ts_clock_divisor);
@@ -2623,9 +2625,6 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 	dev_addr_mod(netdev, 0, devdata->dev_info.device_id,
 		     sizeof(devdata->dev_info.device_id));
 #endif
-
-	netdev->dev_id = ctrl_index;
-	netdev->dev_port = ctrl_index;
 
 	err = sysfs_create_group(&netdev->dev.kobj, &ixxat_pdev_group);
 	if (err < 0) {
