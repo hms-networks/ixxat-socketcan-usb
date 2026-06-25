@@ -70,7 +70,7 @@
 ### 2.1.6	(2026-03-30)
 
 - during tests sometimes E_PIPE errors occured, now the driver does retry
-  sending usb control messages on errors and msleeps between tries.
+  sending USB control messages on errors and msleeps between tries.
 
 ### 2.1.5	(2026-03-26)
 
@@ -328,7 +328,7 @@
 
 - free shared device data on disconnect
 - renamed ixxat_usb_device to ixxat_usb_candevice because it is the device struct to encapsulate a single CAN (device)
-  create a separate ixxat_usb_device struct that holds usb device specific data (fw info, device info, clock start offset)
+  create a separate ixxat_usb_device struct that holds USB device specific data (fw info, device info, clock start offset)
   implement different possibilities to synchronize device ticks to host clock, select it via IX_SYNCTOHOSTCLOCK define
 - move dmesg output of CAN controller clock settings after device creation
 - add ethtool_ops to support hardware timestamps
@@ -354,7 +354,7 @@ prior to 2.0.576 packages had been released packaged as .tgz files:
   happened very sporadic within a very large time frame of 15 minutes up to 5.5 days.
 - kernel >= 6.1.0: use can_dev_dropped_skb() instead of can_dropped_invalid_skb() to check skb in ixxat_usb_start_xmit()
 - remove call to usb_reset_configuration() in probe because it leads to VMWare to crash later during device usage.
-  It seems hat VMWare selects the wrong usb configuration after the reset.
+  It seems hat VMWare selects the wrong USB configuration after the reset.
 - replace kfree_skb() with dev_kfree_skb() calls
 
 ### 2.0.504	(2024-04-15)

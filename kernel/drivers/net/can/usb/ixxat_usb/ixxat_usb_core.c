@@ -47,7 +47,7 @@ MODULE_LICENSE("GPL");
 #define IX_TICK_FACTOR			1000000000ULL
 #endif
 
-/* Number of echo skb */
+/* Number of echo skbs */
 #define IXXAT_USB_MAX_MSGS		32
 
 /* Number of attempts to send a USB command before deciding on failure */
@@ -121,7 +121,7 @@ static const struct ixxat_driver_info legacy_usb2can_fd_auto = {
 };
 
 static const struct ixxat_driver_info legacy_usb2can_fd_pcie_mini = {
-	.name = "IXXAT USB PCIE Mini FD",
+	.name = "IXXAT USB PCIe Mini FD",
 	.adapter = &usb2can_fd,
 };
 
@@ -579,7 +579,7 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 			if (ret > 0) {
 				pos += ret;
 
-				/* Got  the entire response? */
+				/* Got the entire response? */
 				continue;
 			}
 		}
@@ -2669,7 +2669,7 @@ static int ixxat_usb_check_channel(const struct ixxat_usb_adapter *adapter,
 		const u8 epaddr = host_intf->endpoint[i].desc.bEndpointAddress;
 		u8 j;
 
-		/* Check if usb-endpoint address matches known usb-endpoints */
+		/* Check if USB endpoint address matches known USB endpoints */
 		match = 0;
 		for (j = 0; j < IXXAT_USB_MAX_CHANNEL; j++) {
 			u8 ep_msg_in = adapter->ep_msg_in[j];

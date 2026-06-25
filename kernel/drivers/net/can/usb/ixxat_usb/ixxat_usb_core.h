@@ -310,7 +310,7 @@ struct ixxat_canbtp {
 	__le16 tdo;
 } __packed;
 
-/* struct ixxat_dev_info IXXAT usb device information
+/* struct ixxat_dev_info IXXAT USB device information
  * @device_name: Name of the device
  * @device_id: Device identification (unique device id)
  * @device_version: Device version (0, 1, ...)
@@ -325,7 +325,7 @@ struct ixxat_dev_info {
 	__le32 device_fpga_version;
 } __packed;
 
-/* struct ixxat_fw_info IXXAT usb firmware information
+/* struct ixxat_fw_info IXXAT USB device firmware information
  * @firmware_type: type of currently running firmware
  * @major_version: major firmware version number
  * @minor_version: minor firmware version number
@@ -341,7 +341,7 @@ struct ixxat_fw_info {
 	__le16 build_version;
 } __packed;
 
-/* struct ixxat_fw_info2 IXXAT usb firmware information
+/* struct ixxat_fw_info2 IXXAT USB device firmware information
  * @firmware_type: type of currently running firmware
  * @major_version: major firmware version number
  * @minor_version: minor firmware version number
@@ -511,9 +511,9 @@ struct ixxat_tx_urb_context {
  * @udev: USB device
  * @netdev: Net_device
  * @active_tx_urbs: Active tx urbs
- * @tx_anchor: Submitted tx usb anchor
+ * @tx_anchor: Submitted tx USB anchor
  * @tx_contexts: Buffer for tx contexts
- * @rx_anchor: Submitted rx usb anchor
+ * @rx_anchor: Submitted rx USB anchor
  * @msgs: store to set the used message indexes
  * @msg_lastindex: last index which was set
  * @loopback:  global loopback
@@ -526,7 +526,7 @@ struct ixxat_tx_urb_context {
  * @dev_info: Device information
  * @bec: CAN error counter
  *
- * IXXAT usb based CAN device
+ * IXXAT USB based CAN device
  */
 struct ixxat_usb_candevice {
 	struct can_priv can;
@@ -554,7 +554,7 @@ struct ixxat_usb_candevice {
 	/* This lock prevents a race condition between xmit and receive. */
 	spinlock_t dev_lock;
 
-	/* pointer to shared usb device data  */
+	/* pointer to shared USB device data  */
 	struct ixxat_usb_device_data *shareddata;
 
 	/* used to link can devices together */
@@ -641,7 +641,7 @@ struct ixxat_usb_init_cl1_cmd {
  * @req: Request block
  * @opmode: Operation mode
  * @exmode: Extended mode
- * @sdr: Stadard bittiming parameters
+ * @sdr: Standard bittiming parameters
  * @fdr: Fast data bittiming parameters
  * @_padding: 2 bytes padding
  * @res: Response block
@@ -661,7 +661,7 @@ struct ixxat_usb_init_cl2_cmd {
 /* struct ixxat_usb_getcaps_cl1_cmd Controller read capabilities
  * @req: Request block
  * @res: Response block
- * @caps: Controller cabilities
+ * @caps: Controller capabilities
  *
  * Can be sent to a device to get the controller capabilities
  */
@@ -674,7 +674,7 @@ struct ixxat_usb_getcaps_cl1_cmd {
 /* struct ixxat_usb_getcaps_cl2_cmd Controller read capabilities
  * @req: Request block
  * @res: Response block
- * @caps: Controller cabilities
+ * @caps: Controller capabilities
  *
  * Can be sent to a device to get the controller capabilities
  */
