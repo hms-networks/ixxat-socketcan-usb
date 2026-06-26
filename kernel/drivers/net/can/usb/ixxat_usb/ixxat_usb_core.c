@@ -43,7 +43,7 @@ MODULE_LICENSE("GPL");
 					  IX_MIN_MINORFWVERSION_SUPP_V2)
 
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
-/* multiply by 100.000.000 to get 1ns resolution */
+/* multiply by 1.000.000.000 to get 1ns resolution */
 #define IX_TICK_FACTOR			1000000000ULL
 #endif
 
