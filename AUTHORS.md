@@ -1,6 +1,6 @@
 # Current Authors
 
-Stéphane Grosjean <stephane.grosjean@hms-networks.com>
+Stéphane Grosjean <s.grosjean@peak-system.fr>
 Klaus Oberhofer <klaus.oberhofer@hms-networks.com>
 Walter Steinhauser <walter.steinhauser@hms-networks.com>
 
