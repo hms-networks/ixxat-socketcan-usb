@@ -641,22 +641,10 @@ static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 		goto fail;
 	}
 
-	/* firmware responses may be smaller than requested response size
-	 * but should be not smaller than the response header size
-	 */
-	if (pos < sizeof(struct ixxat_usb_dal_res)) {
-		dev_err(&dev->dev, KBUILD_MODNAME
-			": Invalid cmd rsp size %u (%u expected)\n",
-			pos, res_size);
+	/* copy response to user buffer */
+	memcpy(res, res_buf, res_size);
 
-		if (ret >= 0)
-			ret = -EBADMSG;
-	} else {
-		/* copy response to user buffer */
-		memcpy(res, res_buf, res_size);
-
-		ret = le32_to_cpu(dal_res->code);
-	}
+	ret = le32_to_cpu(dal_res->code);
 
 fail:
 	mutex_unlock(&devdata->cmd_channel_lock);
