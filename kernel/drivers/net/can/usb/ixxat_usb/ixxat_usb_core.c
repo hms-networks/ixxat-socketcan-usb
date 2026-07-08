@@ -341,7 +341,7 @@ static const struct ixxat_usb_adapter *
 static int ixxat_usb_needs_firmware_update(const struct usb_device_id *id,
 					   struct ixxat_fw_info2 *fwinfo)
 {
-	/* firmware update is recomended for devices with cl1 firmware */
+	/* firmware update is recommended for devices with cl1 firmware */
 	return (ixxat_usb_is_legacy_usb2can(id)) ?
 		!ixxat_usb_has_cl2_firmware(id, fwinfo) : 0;
 }
