@@ -2806,19 +2806,30 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 	} else {
 		u32 fw_type = le32_to_cpu(devdata->fw_info.firmware_type);
 
+		/* check FW type */
 		if (fw_type != IXXAT_USB_DEV_FWTYPE_BAL) {
 			dev_err(&intf->dev,
 				"Firmware type %u unknown; %u expected\n",
 				fw_type, IXXAT_USB_DEV_FWTYPE_BAL);
 			err = -EFAULT;
+		} else {
+			/* check if FW supports get_fw_info2 command and use it
+			 * to get additional info
+			 */
+			if (ixxat_usb_has_cl2_firmware(id, &devdata->fw_info)) {
+				err = ixxat_usb_get_fw_info2(udev, devdata);
+				if (err) {
+					dev_err(&intf->dev,
+						"Failed to get info2: err %d\n",
+						err);
+					goto lbl_err;
+				}
+			}
 
-		/* Otherwise, check if FW supports get_fw_info2 command */
-		} else if (ixxat_usb_has_cl2_firmware(id, &devdata->fw_info)) {
-			err = ixxat_usb_get_fw_info2(udev, devdata);
+			/* check FW version */
+			err = ixxat_usb_check_firmware(intf, id, devdata);
 			if (err)
-				dev_err(&intf->dev,
-					"Failed to get FW info2 (err %d)\n",
-					err);
+				goto lbl_err;
 		}
 	}
 
