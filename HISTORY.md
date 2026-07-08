@@ -2,6 +2,12 @@
 
 ## History
 
+### 2.1.11	(2026-07-08)
+
+- Refuses to support firmware versions < v1.6.0, which complicate the handling of exchanges; strongly recommends updating the firmware instead.
+- Reorganizes the assignment of dev_id and dev_port before registering the device in socket-CAN
+- Fix USB2CAN FD "Professional" device id name into "Embedded" and change its value from 0x0016 to 0x0015 (0x0016 did never exist)
+
 ### 2.1.10	(2026-05-21)
 
 - fix use of struct kernel_ethtool_ts_info which is defined from kernel version >= 6.11.0
