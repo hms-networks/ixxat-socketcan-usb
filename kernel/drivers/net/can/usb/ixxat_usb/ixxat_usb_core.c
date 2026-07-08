@@ -332,6 +332,27 @@ static const struct ixxat_usb_adapter *
 	return drv_info->adapter;
 }
 
+/* ixxat_usb_firmware_update_needed - check if firmware update is needed
+ * @id: USB device id
+ * @fwinfo: Firmware info of the device
+ *
+ * Returns != 0 if firmware update is needed, 0 otherwise.
+ */
+static int ixxat_usb_firmware_update_needed(const struct usb_device_id *id,
+					    struct ixxat_fw_info2 *fwinfo)
+{
+	/* firmware update is needed for legacy devices with FW < v1.6.0.x */
+	if (ixxat_usb_is_legacy_usb2can(id) && fwinfo) {
+		int major = le16_to_cpu(fwinfo->major_version);
+		int minor = le16_to_cpu(fwinfo->minor_version);
+		int build = le16_to_cpu(fwinfo->build_version);
+
+		return IX_FW_VER(major, minor, build) < IX_FW_VER(1, 6, 0);
+	}
+
+	return 0;
+}
+
 /* ixxat_usb_firmware_update_recommended - check if firmware update is
  *                                         recommended
  * @id: USB device id
@@ -345,6 +366,36 @@ static int ixxat_usb_firmware_update_recommended(const struct usb_device_id *id,
 	/* firmware update is recommended for devices with cl1 firmware */
 	return (ixxat_usb_is_legacy_usb2can(id)) ?
 		!ixxat_usb_has_cl2_firmware(id, fwinfo) : 0;
+}
+
+/* ixxat_usb_check_firmware - check if a firmware update is necessary or
+ *                            recommended
+ * @intf: pointer to the USB interface
+ * @id: USB device id
+ * @fwinfo: Firmware info of the device
+ *
+ * Returns != 0 if firmware update is needed, 0 otherwise.
+ */
+static int ixxat_usb_check_firmware(struct usb_interface *intf,
+				    const struct usb_device_id *id,
+				    struct ixxat_usb_device_data *devdata)
+{
+	/* check if FW update is needeed */
+	if (ixxat_usb_firmware_update_needed(id, &devdata->fw_info)) {
+		dev_err(&intf->dev,
+			"Current FW v%d.%d.%d.%d requires update to run\n",
+			le16_to_cpu(devdata->fw_info.major_version),
+			le16_to_cpu(devdata->fw_info.minor_version),
+			le16_to_cpu(devdata->fw_info.build_version),
+			le16_to_cpu(devdata->fw_info.revision));
+		return -ENODEV;
+	}
+
+	/* check if FW update is recommended */
+	if (ixxat_usb_firmware_update_recommended(id, &devdata->fw_info))
+		dev_warn(&intf->dev, "Firmware update recommended\n");
+
+	return 0;
 }
 
 /* ixxat_usb_get_tx_context - get a free URB context for transmission
