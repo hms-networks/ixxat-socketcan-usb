@@ -332,14 +332,15 @@ static const struct ixxat_usb_adapter *
 	return drv_info->adapter;
 }
 
-/* ixxat_usb_needs_firmware_update - check if firmware update is needed
+/* ixxat_usb_firmware_update_recommended - check if firmware update is
+ *                                         recommended
  * @id: USB device id
  * @fwinfo: Firmware info of the device
  *
  * Returns != 0 if firmware update is recommended, 0 otherwise.
  */
-static int ixxat_usb_needs_firmware_update(const struct usb_device_id *id,
-					   struct ixxat_fw_info2 *fwinfo)
+static int ixxat_usb_firmware_update_recommended(const struct usb_device_id *id,
+						 struct ixxat_fw_info2 *fwinfo)
 {
 	/* firmware update is recommended for devices with cl1 firmware */
 	return (ixxat_usb_is_legacy_usb2can(id)) ?
@@ -2824,9 +2825,6 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 			 "CL1 firmware    : Exact statistics mode disabled.\n");
 #endif
 #endif
-
-	if (ixxat_usb_needs_firmware_update(id, &devdata->fw_info))
-		dev_warn(&intf->dev, "Firmware update recommended.\n");
 
 	err = ixxat_usb_get_dev_caps(udev, devdata, &dev_caps);
 	if (err) {
