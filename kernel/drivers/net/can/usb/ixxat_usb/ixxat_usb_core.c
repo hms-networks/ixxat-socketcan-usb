@@ -380,14 +380,17 @@ static int ixxat_usb_check_firmware(struct usb_interface *intf,
 				    const struct usb_device_id *id,
 				    struct ixxat_usb_device_data *devdata)
 {
+	dev_info(&intf->dev, "Firmware version: %d.%d.%d.%d (type: %d)",
+		 le16_to_cpu(devdata->fw_info.major_version),
+		 le16_to_cpu(devdata->fw_info.minor_version),
+		 le16_to_cpu(devdata->fw_info.build_version),
+		 le16_to_cpu(devdata->fw_info.revision),
+		 le32_to_cpu(devdata->fw_info.firmware_type));
+
 	/* check if FW update is needeed */
 	if (ixxat_usb_firmware_update_needed(id, &devdata->fw_info)) {
 		dev_err(&intf->dev,
-			"Current FW v%d.%d.%d.%d requires update to run\n",
-			le16_to_cpu(devdata->fw_info.major_version),
-			le16_to_cpu(devdata->fw_info.minor_version),
-			le16_to_cpu(devdata->fw_info.build_version),
-			le16_to_cpu(devdata->fw_info.revision));
+			"Current firmware requires update to run\n");
 		return -ENODEV;
 	}
 
@@ -2779,6 +2782,8 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 		LINUX_VERSION_CODE, LINUX_VERSION_CODE);
 #endif
 
+	dev_info(&intf->dev, "%s\n", ixxat_usb_dev_name(id));
+
 	/* Power-up the device */
 	err = ixxat_usb_power_ctrl(udev, devdata, IXXAT_USB_POWER_WAKEUP);
 	if (err != NETDEV_TX_OK) {
@@ -2835,8 +2840,6 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 		goto lbl_err;
 	}
 
-	dev_info(&intf->dev, "%s\n", ixxat_usb_dev_name(id));
-
 	err = ixxat_usb_check_channel(adapter, intf->altsetting);
 	if (err != NETDEV_TX_OK)
 		goto lbl_err;
@@ -2862,20 +2865,12 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 		 devdata->dev_info.device_version);
 	dev_info(&intf->dev, "FPGA version    : 0x%08X\n",
 		 devdata->dev_info.device_fpga_version);
-	dev_info(&intf->dev, "Firmware version: %d.%d.%d.%d (type: %d)",
-		 le16_to_cpu(devdata->fw_info.major_version),
-		 le16_to_cpu(devdata->fw_info.minor_version),
-		 le16_to_cpu(devdata->fw_info.build_version),
-		 le16_to_cpu(devdata->fw_info.revision),
-		 le32_to_cpu(devdata->fw_info.firmware_type));
-
 #ifdef IX_STATISTICS_EXACT
 	if (adapter == &usb2can_cl1)
 		dev_warn(&intf->dev,
 			 "CL1 firmware    : Exact statistics mode disabled.\n");
 #endif
 #endif
-
 	err = ixxat_usb_get_dev_caps(udev, devdata, &dev_caps);
 	if (err) {
 		dev_err(&intf->dev,
