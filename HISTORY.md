@@ -2,6 +2,10 @@
 
 ## History
 
+### 2.1.12	(2026-07-09)
+
+- rearrange dmesg logging order: device name first, then running firmware version, followed by potential request/advice so upgrade it
+
 ### 2.1.11	(2026-07-08)
 
 - Refuses to support firmware versions < v1.6.0, which complicate the handling of exchanges; strongly recommends updating the firmware instead.
