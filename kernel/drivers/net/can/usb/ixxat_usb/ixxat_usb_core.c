@@ -675,11 +675,10 @@ int ixxat_usb_send_cmd(struct ixxat_usb_candevice *pdev, const u16 port,
 		       void *req, const u16 req_size, void *res,
 		       const u16 res_size, const unsigned long cmd_delay)
 {
-	struct usb_device *dev = pdev->udev;
-	struct ixxat_usb_device_data *devdata = pdev->shareddata;
-
-	return ixxat_usb_send_cmd_internal(dev, devdata, port, req, req_size,
-					   res, res_size, cmd_delay);
+	return (pdev->state & IXXAT_USB_STATE_CONNECTED) ?
+		ixxat_usb_send_cmd_internal(pdev->udev, pdev->shareddata,
+					    port, req, req_size, res, res_size,
+					    cmd_delay) : -ENODEV;
 }
 
 #ifdef IX_CONFIG_USE_HW_TIMESTAMPS
@@ -2310,6 +2309,8 @@ static void ixxat_usb_disconnect(struct usb_interface *intf)
 		struct ixxat_usb_candevice *prev_dev = dev->prev_dev;
 		struct net_device *netdev = dev->netdev;
 		char name[IFNAMSIZ];
+
+		dev->state &= ~IXXAT_USB_STATE_CONNECTED;
 
 		strscpy(name, netdev->name, IFNAMSIZ);
 
