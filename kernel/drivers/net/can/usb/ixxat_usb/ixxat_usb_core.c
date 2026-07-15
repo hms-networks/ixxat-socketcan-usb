@@ -543,7 +543,6 @@ void ixxat_usb_setup_cmd(struct ixxat_usb_dal_req *req,
  * device data are available.
  *
  * Returns >= 0 on success, negative error code on failure.
- * If the response size is wrong it returns -EBADMSG.
  */
 static int ixxat_usb_send_cmd_internal(struct usb_device *dev,
 				       struct ixxat_usb_device_data *devdata,
@@ -665,11 +664,10 @@ fail:
  * @cmd_delay: delay in milliseconds to wait for a response
  *
  * This function sends a command to the IXXAT USB device and waits for the
- * response. It retries the command up to IXXAT_USB_MAX_COM_REQ times if the
- * command fails to be sent or the response is not received.
+ * response, if it is still connected.
  *
  * Returns >= 0 on success, negative error code on failure.
- * If the response size is wrong it returns -EBADMSG.
+ * If the device is disconnected it returns -ENODEV.
  */
 int ixxat_usb_send_cmd(struct ixxat_usb_candevice *pdev, const u16 port,
 		       void *req, const u16 req_size, void *res,
