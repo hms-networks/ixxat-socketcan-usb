@@ -2,6 +2,10 @@
 
 ## History
 
+### 2.1.13	(2026-07-15)
+
+- keep track of the USB device disconnection so commands are not written to it later when unregistering its socket-CAN interfaces.
+
 ### 2.1.12	(2026-07-09)
 
 - rearrange dmesg logging order: device name first, then running firmware version, followed by potential request/advice so upgrade it
