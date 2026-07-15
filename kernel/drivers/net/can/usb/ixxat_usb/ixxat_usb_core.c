@@ -1062,7 +1062,8 @@ static int ixxat_usb_power_ctrl(struct usb_device *dev,
 	return ixxat_usb_send_cmd_internal(dev, devdata,
 					   le16_to_cpu(cmd.req.port),
 					   &cmd, snd_size,
-					   &cmd.res, rcv_size, IXXAT_USB_POWER_CMD_TIMEOUT);
+					   &cmd.res, rcv_size,
+					   IXXAT_USB_POWER_CMD_TIMEOUT);
 }
 
 /* ixxat_usb_reset_ctrl - reset the controller
