@@ -1352,7 +1352,6 @@ static int ixxat_usb_handle_canmsg(struct ixxat_usb_candevice *dev,
 	if (ixx_flags & IXXAT_USB_MSG_FLAGS_OVR) {
 		netdev->stats.rx_over_errors++;
 		netdev->stats.rx_errors++;
-		netdev_warn(netdev, "CAN messages overflow\n");
 	}
 
 #ifdef IX_STATISTICS_EXACT
