@@ -1640,26 +1640,22 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 		size = data[pos] + 1;
 		if (size > sizeof(can_msg) ||
 		    size < sizeof(struct ixxat_can_msg_base)) {
-			err = -EBADMSG;
-			netdev_err(netdev, "USB invalid msg size %u\n", size);
-			break;
+			netdev_err(netdev, "Error: USB Invalid msg size %u\n",
+				   size);
+			return -EBADMSG;
 		}
 
 		memcpy(&can_msg, data + pos, size);
 		if (!can_msg.base.size) {
-			err = -EOPNOTSUPP;
-			netdev_err(netdev, "Error %d: USB Unsupported msg\n",
-				   err);
-			break;
+			netdev_err(netdev, "Error: USB Unsupported msg size\n");
+			return -EOPNOTSUPP;
 		}
 
 		size = can_msg.base.size + 1;
 		if (size < sizeof(can_msg.base) || (pos + size) > len) {
-			err = -EBADMSG;
 			netdev_err(netdev,
-				   "Error %d: USB Invalid message size\n",
-				   err);
-			break;
+				   "Error: USB Invalid remaining USB msg size\n");
+			return -EBADMSG;
 		}
 
 		type = le32_to_cpu(can_msg.base.flags);
@@ -1705,7 +1701,7 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 
 fail:
 	if (err)
-		netdev_err(netdev, "Error %d: Buffer decoding failed\n", err);
+		netdev_err(netdev, "Error %d while decoding buffer\n", err);
 
 	return err;
 }
