@@ -2073,7 +2073,7 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 
 		if (!urb) {
 			err = -ENOMEM;
-			netdev_err(netdev, "Error %d: No memory for URBs\n",
+			netdev_err(netdev, "Error %d: No memory for Rx URB\n",
 				   err);
 			break;
 		}
@@ -2083,7 +2083,7 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 			usb_free_urb(urb);
 			err = -ENOMEM;
 			netdev_err(netdev,
-				   "Error %d: No memory for USB-buffer\n", err);
+				   "Error %d: No memory for USB buffer\n", err);
 			break;
 		}
 
@@ -2148,7 +2148,7 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 
 		if (!urb) {
 			err = -ENOMEM;
-			netdev_err(netdev, "Error %d: No memory for URBs\n",
+			netdev_err(netdev, "Error %d: No memory for Tx URB\n",
 				   err);
 			break;
 		}
@@ -2158,7 +2158,7 @@ static int ixxat_usb_setup_tx_urbs(struct ixxat_usb_candevice *dev)
 			usb_free_urb(urb);
 			err = -ENOMEM;
 			netdev_err(netdev,
-				   "Error %d: No memory for USB-buffer\n", err);
+				   "Error %d: No memory for USB buffer\n", err);
 			break;
 		}
 
@@ -2664,7 +2664,7 @@ static int ixxat_usb_create_ctrl(struct usb_interface *intf,
 
 	err = sysfs_create_group(&netdev->dev.kobj, &ixxat_pdev_group);
 	if (err < 0) {
-		netdev_err(netdev, "Error: %d: create sysfs failed\n", err);
+		netdev_err(netdev, "Error: %d: sysfs group failed\n", err);
 		goto free_candev;
 	}
 
