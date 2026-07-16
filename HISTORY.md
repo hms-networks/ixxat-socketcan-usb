@@ -2,6 +2,11 @@
 
 ## History
 
+### 2.1.14	(2026-07-16)
+
+- remove dmesg logging in case of overrun condition (to avoid dmesg buffer flooding)
+- improve error message logging to avoid double logging in case of errors
+
 ### 2.1.13	(2026-07-15)
 
 - keep track of the USB device disconnection so commands are not written to it later when unregistering its socket-CAN interfaces.
