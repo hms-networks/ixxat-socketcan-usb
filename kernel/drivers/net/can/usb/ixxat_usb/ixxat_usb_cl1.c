@@ -28,16 +28,6 @@
 
 #define IXXAT_USB_BTMODE_TSM_CL1	0x80
 
-/* bittiming parameters */
-#define IXXAT_USB2CAN_TSEG1_MIN		1
-#define IXXAT_USB2CAN_TSEG1_MAX		16
-#define IXXAT_USB2CAN_TSEG2_MIN		1
-#define IXXAT_USB2CAN_TSEG2_MAX		8
-#define IXXAT_USB2CAN_SJW_MAX		4
-#define IXXAT_USB2CAN_BRP_MIN		1
-#define IXXAT_USB2CAN_BRP_MAX		64
-#define IXXAT_USB2CAN_BRP_INC		1
-
 /* USB endpoint mapping for CL1 */
 #define IXXAT_USB2CAN_EP1_IN		(1 | USB_DIR_IN)
 #define IXXAT_USB2CAN_EP2_IN		(2 | USB_DIR_IN)
@@ -56,14 +46,14 @@
 
 static const struct can_bittiming_const usb2can_bt = {
 	.name = KBUILD_MODNAME,
-	.tseg1_min = IXXAT_USB2CAN_TSEG1_MIN,
-	.tseg1_max = IXXAT_USB2CAN_TSEG1_MAX,
-	.tseg2_min = IXXAT_USB2CAN_TSEG2_MIN,
-	.tseg2_max = IXXAT_USB2CAN_TSEG2_MAX,
-	.sjw_max = IXXAT_USB2CAN_SJW_MAX,
-	.brp_min = IXXAT_USB2CAN_BRP_MIN,
-	.brp_max = IXXAT_USB2CAN_BRP_MAX,
-	.brp_inc = IXXAT_USB2CAN_BRP_INC,
+	.tseg1_min = 1,
+	.tseg1_max = 16,
+	.tseg2_min = 1,
+	.tseg2_max = 8,
+	.sjw_max = 4,
+	.brp_min = 1,
+	.brp_max = 64,
+	.brp_inc = 1,
 };
 
 /* ixxat_usb_get_ctrl_caps - get controller capabilities

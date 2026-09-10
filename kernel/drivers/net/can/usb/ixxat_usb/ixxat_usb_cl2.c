@@ -51,54 +51,6 @@
 					 CAN_CTRLMODE_LOOPBACK | \
 					 CAN_CTRLMODE_BERR_REPORTING)
 
-/* bittiming parameters USB-to-CAN FD */
-#define IXXAT_USB2CANFD_TSEG1_MIN	1
-#define IXXAT_USB2CANFD_TSEG1_MAX	256
-#define IXXAT_USB2CANFD_TSEG2_MIN	1
-#define IXXAT_USB2CANFD_TSEG2_MAX	256
-#define IXXAT_USB2CANFD_SJW_MAX		128
-#define IXXAT_USB2CANFD_BRP_MIN		2
-#define IXXAT_USB2CANFD_BRP_MAX		513
-#define IXXAT_USB2CANFD_BRP_INC		1
-
-#define IXXAT_USB2CANFD_TSEG1_MIN_DATA	1
-#define IXXAT_USB2CANFD_TSEG1_MAX_DATA	256
-#define IXXAT_USB2CANFD_TSEG2_MIN_DATA	1
-#define IXXAT_USB2CANFD_TSEG2_MAX_DATA	256
-#define IXXAT_USB2CANFD_SJW_MAX_DATA	128
-#define IXXAT_USB2CANFD_BRP_MIN_DATA	2
-#define IXXAT_USB2CANFD_BRP_MAX_DATA	513
-#define IXXAT_USB2CANFD_BRP_INC_DATA	1
-
-/* bittiming parameters USB-to-CAN V2 */
-#define IXXAT_USB2CANV2_TSEG1_MIN	1
-#define IXXAT_USB2CANV2_TSEG1_MAX	16
-#define IXXAT_USB2CANV2_TSEG2_MIN	1
-#define IXXAT_USB2CANV2_TSEG2_MAX	8
-#define IXXAT_USB2CANV2_SJW_MAX		4
-#define IXXAT_USB2CANV2_BRP_MIN		1
-#define IXXAT_USB2CANV2_BRP_MAX		1024
-#define IXXAT_USB2CANV2_BRP_INC		1
-
-/* bittiming parameters CAN IDM */
-#define IXXAT_CANIDM_TSEG1_MIN		1
-#define IXXAT_CANIDM_TSEG1_MAX		256
-#define IXXAT_CANIDM_TSEG2_MIN		1
-#define IXXAT_CANIDM_TSEG2_MAX		128
-#define IXXAT_CANIDM_SJW_MAX		128
-#define IXXAT_CANIDM_BRP_MIN		1
-#define IXXAT_CANIDM_BRP_MAX		512
-#define IXXAT_CANIDM_BRP_INC		1
-
-#define IXXAT_CANIDM_TSEG1_MIN_DATA	1
-#define IXXAT_CANIDM_TSEG1_MAX_DATA	32
-#define IXXAT_CANIDM_TSEG2_MIN_DATA	1
-#define IXXAT_CANIDM_TSEG2_MAX_DATA	16
-#define IXXAT_CANIDM_SJW_MAX_DATA	8
-#define IXXAT_CANIDM_BRP_MIN_DATA	1
-#define IXXAT_CANIDM_BRP_MAX_DATA	32
-#define IXXAT_CANIDM_BRP_INC_DATA	1
-
 /* USB endpoint mapping for USB-to-CAN V2 */
 #define IXXAT_USB2CANV2_EP1_IN		(1 | USB_DIR_IN)
 #define IXXAT_USB2CANV2_EP2_IN		(2 | USB_DIR_IN)
@@ -143,38 +95,38 @@
 
 static const struct can_bittiming_const usb2can_v2_bt = {
 	.name = KBUILD_MODNAME,
-	.tseg1_min = IXXAT_USB2CANV2_TSEG1_MIN,
-	.tseg1_max = IXXAT_USB2CANV2_TSEG1_MAX,
-	.tseg2_min = IXXAT_USB2CANV2_TSEG2_MIN,
-	.tseg2_max = IXXAT_USB2CANV2_TSEG2_MAX,
-	.sjw_max = IXXAT_USB2CANV2_SJW_MAX,
-	.brp_min = IXXAT_USB2CANV2_BRP_MIN,
-	.brp_max = IXXAT_USB2CANV2_BRP_MAX,
-	.brp_inc = IXXAT_USB2CANV2_BRP_INC,
+	.tseg1_min = 1,
+	.tseg1_max = 16,
+	.tseg2_min = 1,
+	.tseg2_max = 8,
+	.sjw_max = 4,
+	.brp_min = 1,
+	.brp_max = 1024,
+	.brp_inc = 1,
 };
 
 static const struct can_bittiming_const usb2can_fd_bt = {
 	.name = KBUILD_MODNAME,
-	.tseg1_min = IXXAT_USB2CANFD_TSEG1_MIN,
-	.tseg1_max = IXXAT_USB2CANFD_TSEG1_MAX,
-	.tseg2_min = IXXAT_USB2CANFD_TSEG2_MIN,
-	.tseg2_max = IXXAT_USB2CANFD_TSEG2_MAX,
-	.sjw_max = IXXAT_USB2CANFD_SJW_MAX,
-	.brp_min = IXXAT_USB2CANFD_BRP_MIN,
-	.brp_max = IXXAT_USB2CANFD_BRP_MAX,
-	.brp_inc = IXXAT_USB2CANFD_BRP_INC,
+	.tseg1_min = 1,
+	.tseg1_max = 256,
+	.tseg2_min = 1,
+	.tseg2_max = 256,
+	.sjw_max = 128,
+	.brp_min = 2,
+	.brp_max = 513,
+	.brp_inc = 1,
 };
 
 static const struct can_bittiming_const usb2can_fd_btd = {
 	.name = KBUILD_MODNAME,
-	.tseg1_min = IXXAT_USB2CANFD_TSEG1_MIN_DATA,
-	.tseg1_max = IXXAT_USB2CANFD_TSEG1_MAX_DATA,
-	.tseg2_min = IXXAT_USB2CANFD_TSEG2_MIN_DATA,
-	.tseg2_max = IXXAT_USB2CANFD_TSEG2_MAX_DATA,
-	.sjw_max = IXXAT_USB2CANFD_SJW_MAX_DATA,
-	.brp_min = IXXAT_USB2CANFD_BRP_MIN_DATA,
-	.brp_max = IXXAT_USB2CANFD_BRP_MAX_DATA,
-	.brp_inc = IXXAT_USB2CANFD_BRP_INC_DATA,
+	.tseg1_min = 1,
+	.tseg1_max = 256,
+	.tseg2_min = 1,
+	.tseg2_max = 256,
+	.sjw_max = 128,
+	.brp_min = 2,
+	.brp_max = 513,
+	.brp_inc = 1,
 };
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 13, 0)
@@ -192,26 +144,26 @@ static const struct can_tdc_const usb2can_fd_tdc = {
 
 static const struct can_bittiming_const canidm_bt = {
 	.name = KBUILD_MODNAME,
-	.tseg1_min = IXXAT_CANIDM_TSEG1_MIN,
-	.tseg1_max = IXXAT_CANIDM_TSEG1_MAX,
-	.tseg2_min = IXXAT_CANIDM_TSEG2_MIN,
-	.tseg2_max = IXXAT_CANIDM_TSEG2_MAX,
-	.sjw_max = IXXAT_CANIDM_SJW_MAX,
-	.brp_min = IXXAT_CANIDM_BRP_MIN,
-	.brp_max = IXXAT_CANIDM_BRP_MAX,
-	.brp_inc = IXXAT_CANIDM_BRP_INC
+	.tseg1_min = 1,
+	.tseg1_max = 256,
+	.tseg2_min = 1,
+	.tseg2_max = 128,
+	.sjw_max = 128,
+	.brp_min = 1,
+	.brp_max = 512,
+	.brp_inc = 1
 };
 
 static const struct can_bittiming_const canidm_btd = {
 	.name = KBUILD_MODNAME,
-	.tseg1_min = IXXAT_CANIDM_TSEG1_MIN_DATA,
-	.tseg1_max = IXXAT_CANIDM_TSEG1_MAX_DATA,
-	.tseg2_min = IXXAT_CANIDM_TSEG2_MIN_DATA,
-	.tseg2_max = IXXAT_CANIDM_TSEG2_MAX_DATA,
-	.sjw_max = IXXAT_CANIDM_SJW_MAX_DATA,
-	.brp_min = IXXAT_CANIDM_BRP_MIN_DATA,
-	.brp_max = IXXAT_CANIDM_BRP_MAX_DATA,
-	.brp_inc = IXXAT_CANIDM_BRP_INC_DATA
+	.tseg1_min = 1,
+	.tseg1_max = 32,
+	.tseg2_min = 1,
+	.tseg2_max = 16,
+	.sjw_max = 8,
+	.brp_min = 1,
+	.brp_max = 32,
+	.brp_inc = 1
 };
 
 static int ixxat_usb_get_ctrl_caps(struct ixxat_usb_candevice *dev,
