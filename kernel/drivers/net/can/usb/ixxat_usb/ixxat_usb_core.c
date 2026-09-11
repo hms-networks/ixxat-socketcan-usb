@@ -1675,23 +1675,18 @@ static int ixxat_usb_decode_buf(struct urb *urb)
 		 */
 		size = data[pos] + 1;
 		if (size > sizeof(can_msg) ||
-		    size < sizeof(struct ixxat_can_msg_base)) {
+		    size < sizeof(struct ixxat_can_msg_base) ||
+		    (pos + size) > len) {
 			netdev_err(netdev, "Error: USB Invalid msg size %u\n",
 				   size);
 			return -EBADMSG;
 		}
 
+		/* size is now validated against the received buffer length */
 		memcpy(&can_msg, data + pos, size);
 		if (!can_msg.base.size) {
 			netdev_err(netdev, "Error: USB Unsupported msg size\n");
 			return -EOPNOTSUPP;
-		}
-
-		size = can_msg.base.size + 1;
-		if (size < sizeof(can_msg.base) || (pos + size) > len) {
-			netdev_err(netdev,
-				   "Error: USB Invalid remaining USB msg size\n");
-			return -EBADMSG;
 		}
 
 		type = FIELD_GET(IXXAT_USB_MSG_FLAGS_TYPE_MASK,
