@@ -15,6 +15,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/ethtool.h>
+#include <linux/unaligned.h>
 
 #include "ixxat_usb_core.h"
 
@@ -1468,8 +1469,8 @@ static int ixxat_usb_handle_status(struct ixxat_usb_candevice *dev,
 	}
 
 	raw_status = (dev->adapter == &usb2can_cl1) ?
-		le32_to_cpup((__le32 *)rx->cl1.data) :
-		le32_to_cpup((__le32 *)rx->cl2.data);
+		get_unaligned_le32(rx->cl1.data) :
+		get_unaligned_le32(rx->cl2.data);
 
 	if (raw_status != IXXAT_USB_CAN_STATUS_OK) {
 		if (raw_status & IXXAT_USB_CAN_STATUS_BUSOFF) {
