@@ -841,6 +841,7 @@ struct ixxat_usb_device_data {
  * @ep_msg_in: USB endpoint buffer for incoming messages
  * @ep_msg_out: USB endpoint buffer for outgoing messages
  * @ep_offs: Endpoint offset (device depended)
+ * @cl1_msg_format: Set if the device uses the CL1 CAN message wire format
  *
  * Device Adapter for IXXAT USB devices
  */
@@ -857,6 +858,7 @@ struct ixxat_usb_adapter {
 	const u8 ep_msg_in[IXXAT_USB_MAX_CHANNEL];
 	const u8 ep_msg_out[IXXAT_USB_MAX_CHANNEL];
 	const u8 ep_offs;
+	const bool cl1_msg_format;
 
 	int (*get_ctrl_caps)(struct ixxat_usb_candevice *dev,
 			     struct ixxat_cancaps2 *caps);

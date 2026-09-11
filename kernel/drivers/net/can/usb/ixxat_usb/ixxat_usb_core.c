@@ -332,7 +332,7 @@ static const struct ixxat_usb_adapter *
 	const struct ixxat_driver_info *drv_info =
 		(const struct ixxat_driver_info *)id->driver_info;
 
-	if (drv_info->adapter == &usb2can_cl1 &&
+	if (drv_info->adapter->cl1_msg_format &&
 	    ixxat_usb_has_cl2_firmware(id, dev_fwinfo))
 		return &usb2can_v2;
 
@@ -1262,7 +1262,7 @@ static void ixxat_convert(const struct ixxat_usb_adapter *adapter,
 
 	if (ixx_flags & IXXAT_USB_MSG_FLAGS_RTR)
 		cf->can_id |= CAN_RTR_FLAG;
-	else if (adapter == &usb2can_cl1)
+	else if (adapter->cl1_msg_format)
 		memcpy(cf->data, rx->cl1.data, datalen);
 	else
 		memcpy(cf->data, rx->cl2.data, datalen);
@@ -1368,7 +1368,7 @@ static int ixxat_usb_handle_canmsg(struct ixxat_usb_candevice *dev,
 	struct sk_buff *skb;
 	struct canfd_frame *cf;
 
-	if (dev->adapter == &usb2can_cl1)
+	if (dev->adapter->cl1_msg_format)
 		min_size += sizeof(rx->cl1) - sizeof(rx->cl1.data);
 	else
 		min_size += sizeof(rx->cl2) - sizeof(rx->cl2.data);
@@ -1458,7 +1458,7 @@ static int ixxat_usb_handle_status(struct ixxat_usb_candevice *dev,
 	u32 raw_status;
 	u8 min_size = sizeof(rx->base) + sizeof(raw_status);
 
-	if (dev->adapter == &usb2can_cl1)
+	if (dev->adapter->cl1_msg_format)
 		min_size += sizeof(rx->cl1) - sizeof(rx->cl1.data);
 	else
 		min_size += sizeof(rx->cl2) - sizeof(rx->cl2.data);
@@ -1468,7 +1468,7 @@ static int ixxat_usb_handle_status(struct ixxat_usb_candevice *dev,
 		return -EBADMSG;
 	}
 
-	raw_status = (dev->adapter == &usb2can_cl1) ?
+	raw_status = (dev->adapter->cl1_msg_format) ?
 		get_unaligned_le32(rx->cl1.data) :
 		get_unaligned_le32(rx->cl2.data);
 
@@ -1581,7 +1581,7 @@ static int ixxat_usb_handle_error(struct ixxat_usb_candevice *dev,
 	u8 raw_error;
 	u8 min_size = sizeof(rx->base) + IXXAT_USB_CAN_ERROR_LEN;
 
-	if (dev->adapter == &usb2can_cl1)
+	if (dev->adapter->cl1_msg_format)
 		min_size += sizeof(rx->cl1) - sizeof(rx->cl1.data);
 	else
 		min_size += sizeof(rx->cl2) - sizeof(rx->cl2.data);
@@ -1594,7 +1594,7 @@ static int ixxat_usb_handle_error(struct ixxat_usb_candevice *dev,
 	if (dev->can.state == CAN_STATE_BUS_OFF)
 		return 0;
 
-	if (dev->adapter == &usb2can_cl1) {
+	if (dev->adapter->cl1_msg_format) {
 		raw_error = rx->cl1.data[IXXAT_USB_CAN_ERROR_CODE];
 		dev->bec.rxerr = rx->cl1.data[IXXAT_USB_CAN_ERROR_COUNTER_RX];
 		dev->bec.txerr = rx->cl1.data[IXXAT_USB_CAN_ERROR_COUNTER_TX];
@@ -1785,7 +1785,7 @@ static int ixxat_usb_encode_msg(struct ixxat_usb_candevice *dev,
 
 	msg_base->size = sizeof(*msg_base) + cf->len - 1;
 
-	if (dev->adapter == &usb2can_cl1) {
+	if (dev->adapter->cl1_msg_format) {
 		msg_base->size += sizeof(can_msg.cl1);
 		msg_base->size -= sizeof(can_msg.cl1.data);
 		memcpy(can_msg.cl1.data, cf->data, cf->len);
@@ -2924,7 +2924,7 @@ static int ixxat_usb_probe(struct usb_interface *intf,
 	dev_info(&intf->dev, "FPGA version    : 0x%08X\n",
 		 devdata->dev_info.device_fpga_version);
 #ifdef IX_STATISTICS_EXACT
-	if (adapter == &usb2can_cl1)
+	if (adapter->cl1_msg_format)
 		dev_warn(&intf->dev,
 			 "CL1 firmware    : Exact statistics mode disabled.\n");
 #endif

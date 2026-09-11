@@ -160,6 +160,7 @@ const struct ixxat_usb_adapter usb2can_cl1 = {
 	.modes = IXXAT_USB_MODES,
 	.buffer_size_rx = IXXAT_USB_BUFFER_SIZE_RX,
 	.buffer_size_tx = IXXAT_USB_BUFFER_SIZE_TX,
+	.cl1_msg_format = true,
 	.ep_msg_in = {
 		IXXAT_USB2CAN_EP1_IN,
 		IXXAT_USB2CAN_EP2_IN,
