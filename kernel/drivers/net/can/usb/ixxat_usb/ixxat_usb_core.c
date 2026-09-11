@@ -1750,7 +1750,7 @@ static int ixxat_usb_encode_msg(struct ixxat_usb_candevice *dev,
 {
 	int size;
 	struct canfd_frame *cf = (struct canfd_frame *)skb->data;
-	struct ixxat_can_msg can_msg;
+	struct ixxat_can_msg can_msg = { 0 };
 	struct ixxat_can_msg_base *msg_base = &can_msg.base;
 	u32 flags = 0, msg_id;
 
