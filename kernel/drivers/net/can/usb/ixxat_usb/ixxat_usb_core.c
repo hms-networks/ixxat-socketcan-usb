@@ -1122,7 +1122,8 @@ static int ixxat_usb_reset_ctrl(struct ixxat_usb_candevice *dev)
  *
  * This function stops the network queue, kills all anchored URBs,
  * frees the message index store, and releases all echo skbs.
- * It also resets the URB contexts to the free entry state.
+ * It also frees the TX URBs (and their buffers, via URB_FREE_BUFFER) so
+ * that a subsequent start does not leak the previous allocations.
  */
 static void ixxat_usb_free_usb_communication(struct ixxat_usb_candevice *dev)
 {
@@ -1140,16 +1141,11 @@ static void ixxat_usb_free_usb_communication(struct ixxat_usb_candevice *dev)
 	for (skb_idx = 0; skb_idx < dev->can.echo_skb_max; skb_idx++)
 		can_free_echo_skb(netdev, skb_idx, NULL);
 
-	for (urb_idx = 0; urb_idx < IXXAT_USB_MAX_TX_URBS; urb_idx++)
+	for (urb_idx = 0; urb_idx < IXXAT_USB_MAX_TX_URBS; urb_idx++) {
+		usb_free_urb(dev->tx_contexts[urb_idx].urb);
+		dev->tx_contexts[urb_idx].urb = NULL;
 		dev->tx_contexts[urb_idx].urb_index = IXXAT_USB_FREE_ENTRY;
-#ifndef IX_INTREE_VARIANT
-	/* Annotation:
-	 * The Urbs are released within the system with (usb_free_urb)
-	 * dependant on the reference count
-	 * With the Urbs the assigned buffers are also deleted.
-	 * This is caused by urb->transfer_flags |= URB_FREE_BUFFER;
-	 */
-#endif
+	}
 }
 
 /* ixxat_usb_restart - restart (stop/start) the controller
