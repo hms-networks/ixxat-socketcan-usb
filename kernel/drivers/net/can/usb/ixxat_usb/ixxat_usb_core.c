@@ -1498,8 +1498,15 @@ static int ixxat_usb_handle_status(struct ixxat_usb_candevice *dev,
 		dev->bec.rxerr = 0;
 	}
 
-	if (new_state != CAN_STATE_MAX)
+	/* nothing changed since the last status message: avoid flooding
+	 * userspace with redundant error frames
+	 */
+	if (new_state != CAN_STATE_MAX) {
+		if (new_state == dev->can.state)
+			return 0;
+
 		dev->can.state = new_state;
+	}
 
 	skb = alloc_can_err_skb(netdev, &can_frame);
 	if (unlikely(!skb))
