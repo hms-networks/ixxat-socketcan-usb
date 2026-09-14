@@ -165,7 +165,6 @@ static const struct ixxat_driver_info usb2can_fd_standard_module = {
 
 /* Table of devices that work with this driver */
 static const struct usb_device_id ixxat_usb_table[] = {
-
 	/* Legacy Vendor Id products list */
 	{ USB_DEVICE(IXXAT_USB_VENDOR_ID_LEGACY, USB2CAN_V2_COMPACT_PRODUCT_ID),
 	  .driver_info = (kernel_ulong_t)&legacy_usb2can_compact,
