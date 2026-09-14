@@ -2156,9 +2156,6 @@ static int ixxat_usb_setup_rx_urbs(struct ixxat_usb_candevice *dev)
 			dev->rx_buf[urb_idx] = NULL;
 
 			/* No need to kfree(buf) because of URB_FREE_BUFFER */
-#if 0
-			kfree(buf);
-#endif
 			usb_free_urb(urb);
 
 			if (err == -ENODEV)
