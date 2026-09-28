@@ -2,6 +2,19 @@
 
 ## History
 
+### 2.1.15	(2026-09-28)
+
+- Replace all occurrences of hms-networks.de with hms-networks.com
+- Remove unused symbols from the in-tree variant
+- Incorporate fixes and improvements suggested by Sashiko Bot and during the LKML review of v1 (see:
+  . https://lore.kernel.org/linux-can/20260723074816.007591F000E9@smtp.kernel.org/
+  . https://lore.kernel.org/linux-can/20260723075142.692B61F000E9@smtp.kernel.org/
+  . https://lore.kernel.org/linux-can/20260723075238.775B51F000E9@smtp.kernel.org/
+  . https://lore.kernel.org/linux-can/20260723075509.AFFC21F000E9@smtp.kernel.org/
+  . https://lore.kernel.org/linux-can/9a8bb69e-7653-4ea1-b67d-f7cbd83a4cd2@kernel.org/
+- Fix build issues on Linux kernel v5.15.193 and earlier
+- Add Transmitter Delay Compensation (TDC) support with Linux CAN integration adapted to the target kernel version
+
 ### 2.1.14	(2026-07-16)
 
 - remove dmesg logging in case of overrun condition (to avoid dmesg buffer flooding)
